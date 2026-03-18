@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-04-PLAN.md
-last_updated: "2026-03-18T17:12:29Z"
-last_activity: 2026-03-18 -- Plan 04-04 executed (OpenAPI multi-version docs, Bearer transformer, Scalar UI)
+stopped_at: Completed 04-05-PLAN.md
+last_updated: "2026-03-18T17:19:33Z"
+last_activity: 2026-03-18 -- Plan 04-05 executed (AuthController, versioned TodoControllers, FluentValidation validators)
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 13
-  completed_plans: 11
-  percent: 85
+  completed_plans: 12
+  percent: 92
 ---
 
 # Project State
@@ -21,21 +21,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 4: Security and API Surface in progress. Auth modules and OpenAPI complete. Next: Plan 04-05 (Rate Limiting).
+**Current focus:** Phase 4: Security and API Surface in progress. Controllers and validation complete. Next: Plan 04-06 (Program.cs wiring).
 
 ## Current Position
 
 Phase: 4 of 6 (Security and API Surface)
-Plan: 5 of 6 in current phase (4 complete)
-Status: Phase 4 in progress -- Plan 04-04 complete
-Last activity: 2026-03-18 -- Plan 04-04 executed (OpenAPI multi-version docs, Bearer transformer, Scalar UI)
+Plan: 6 of 6 in current phase (5 complete)
+Status: Phase 4 in progress -- Plan 04-05 complete
+Last activity: 2026-03-18 -- Plan 04-05 executed (AuthController, versioned TodoControllers, FluentValidation validators)
 
-Progress: [########--] 85% (11/13 plans)
+Progress: [█████████░] 92% (12/13 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 5min
 - Total execution time: 0.9 hours
 
@@ -46,10 +46,10 @@ Progress: [########--] 85% (11/13 plans)
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
 | 03 | 3 | 12min | 4min |
-| 04 | 5 | 24min | 5min |
+| 04 | 6 | 27min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 4min, 6min, 3min, 7min
+- Last 5 plans: 4min, 6min, 3min, 7min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -94,6 +94,8 @@ Recent decisions affecting current work:
 - 04-03: GoogleAuthOptions has no [Required] attributes and no ValidateOnStart -- empty credentials trigger safe no-op
 - 04-04: Adapted BearerSecuritySchemeTransformer for Microsoft.OpenApi v2.0.0 breaking changes (namespace, property, and type changes)
 - 04-04: Used OpenApiSecuritySchemeReference instead of OpenApiSecurityScheme+OpenApiReference for security requirements (v2.0.0 API)
+- 04-05: AuthController uses [ApiVersionNeutral] -- auth is infrastructure, not a versioned business API
+- 04-05: FluentValidation.DependencyInjectionExtensions added directly to Host csproj for explicitness despite transitive availability
 
 ### Pending Todos
 
@@ -105,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T17:12:29Z
-Stopped at: Completed 04-04-PLAN.md
-Resume file: .planning/phases/04-security-and-api-surface/04-04-SUMMARY.md
+Last session: 2026-03-18T17:19:33Z
+Stopped at: Completed 04-05-PLAN.md
+Resume file: .planning/phases/04-security-and-api-surface/04-05-SUMMARY.md

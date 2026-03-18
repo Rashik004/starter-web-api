@@ -85,13 +85,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **VERS-01**: API versioning is configured using Asp.Versioning.Http/Mvc
 - [x] **VERS-02**: URL segment versioning is the default strategy (/api/v1/)
-- [ ] **VERS-03**: Sample v1 and v2 controllers demonstrate the versioning pattern and migration path
+- [x] **VERS-03**: Sample v1 and v2 controllers demonstrate the versioning pattern and migration path
 
 ### Input Validation
 
 - [x] **VALD-01**: FluentValidation 12 is integrated using manual IValidator<T> injection (not deprecated auto-pipeline)
-- [ ] **VALD-02**: Validation failures return RFC 7807 Problem Details responses consistent with exception handling
-- [ ] **VALD-03**: Sample validators for request DTOs are included
+- [x] **VALD-02**: Validation failures return RFC 7807 Problem Details responses consistent with exception handling
+- [x] **VALD-03**: Sample validators for request DTOs are included
 
 ### Standardized Responses
 
@@ -210,10 +210,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOCS-04 | Phase 4 | Complete |
 | VERS-01 | Phase 4 | Complete |
 | VERS-02 | Phase 4 | Complete |
-| VERS-03 | Phase 4 | Pending |
+| VERS-03 | Phase 4 | Complete |
 | VALD-01 | Phase 4 | Complete |
-| VALD-02 | Phase 4 | Pending |
-| VALD-03 | Phase 4 | Pending |
+| VALD-02 | Phase 4 | Complete |
+| VALD-03 | Phase 4 | Complete |
 | RATE-01 | Phase 5 | Pending |
 | RATE-02 | Phase 5 | Pending |
 | RATE-03 | Phase 5 | Pending |
