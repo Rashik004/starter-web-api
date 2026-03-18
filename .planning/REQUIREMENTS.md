@@ -43,13 +43,13 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Authentication & Authorization
 
 - [x] **AUTH-01**: ASP.NET Identity provides user/role/claim store backed by EF Core
-- [ ] **AUTH-02**: JWT Bearer tokens can be issued and validated for API access
-- [ ] **AUTH-03**: Google OAuth is available as an external authentication provider
+- [x] **AUTH-02**: JWT Bearer tokens can be issued and validated for API access
+- [x] **AUTH-03**: Google OAuth is available as an external authentication provider
 - [x] **AUTH-04**: PolicyScheme with ForwardDefaultSelector correctly routes JWT vs cookie authentication
 - [x] **AUTH-05**: Identity store is independently removable (API can work with JWT-only)
 - [x] **AUTH-06**: Google OAuth is independently removable
 - [x] **AUTH-07**: JWT Bearer is independently removable (for server-rendered scenarios)
-- [ ] **AUTH-08**: All three auth layers are enabled by default to demonstrate composition
+- [x] **AUTH-08**: All three auth layers are enabled by default to demonstrate composition
 
 ### Database
 
@@ -194,13 +194,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-05 | Phase 3 | Complete |
 | DATA-06 | Phase 3 | Complete |
 | AUTH-01 | Phase 4 | Complete |
-| AUTH-02 | Phase 4 | Pending |
-| AUTH-03 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Complete |
+| AUTH-03 | Phase 4 | Complete |
 | AUTH-04 | Phase 4 | Complete |
 | AUTH-05 | Phase 4 | Complete |
 | AUTH-06 | Phase 4 | Complete |
 | AUTH-07 | Phase 4 | Complete |
-| AUTH-08 | Phase 4 | Pending |
+| AUTH-08 | Phase 4 | Complete |
 | CORS-01 | Phase 4 | Complete |
 | CORS-02 | Phase 4 | Complete |
 | CORS-03 | Phase 4 | Complete |

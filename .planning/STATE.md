@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-18T17:02:00.000Z"
-last_activity: 2026-03-18 -- Plan 04-01 executed (Auth.Shared foundation, IdentityDbContext, TodoItem v2, migration)
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-18T17:09:01Z"
+last_activity: 2026-03-18 -- Plan 04-03 executed (Auth.Identity, Auth.Jwt, Auth.Google modules)
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 13
-  completed_plans: 10
-  percent: 77
+  completed_plans: 11
+  percent: 85
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 4: Security and API Surface in progress. Auth.Shared foundation, IdentityDbContext migration, API surface modules (Versioning, CORS, Validation) built. Next: Plan 04-03 (OpenAPI/Swagger).
+**Current focus:** Phase 4: Security and API Surface in progress. Auth.Shared, Auth.Identity, Auth.Jwt, Auth.Google modules complete. Next: Plan 04-04 (Auth wiring in Program.cs).
 
 ## Current Position
 
 Phase: 4 of 6 (Security and API Surface)
-Plan: 3 of 6 in current phase (3 complete)
-Status: Phase 4 in progress -- Plan 04-01 complete
-Last activity: 2026-03-18 -- Plan 04-01 executed (Auth.Shared foundation, IdentityDbContext, TodoItem v2, migration)
+Plan: 4 of 6 in current phase (4 complete)
+Status: Phase 4 in progress -- Plan 04-03 complete
+Last activity: 2026-03-18 -- Plan 04-03 executed (Auth.Identity, Auth.Jwt, Auth.Google modules)
 
-Progress: [#######---] 77% (10/13 plans)
+Progress: [########--] 85% (11/13 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 5min
-- Total execution time: 0.8 hours
+- Total execution time: 0.9 hours
 
 **By Phase:**
 
@@ -46,10 +46,10 @@ Progress: [#######---] 77% (10/13 plans)
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
 | 03 | 3 | 12min | 4min |
-| 04 | 3 | 14min | 5min |
+| 04 | 4 | 17min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 4min, 4min, 4min, 6min
+- Last 5 plans: 3min, 4min, 4min, 6min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -89,6 +89,9 @@ Recent decisions affecting current work:
 - 04-02: MVC auto-validation suppressed (SuppressModelStateInvalidFilter) so FluentValidation is single validation source
 - 04-01: Used AuthConstants.JwtScheme instead of JwtBearerDefaults.AuthenticationScheme to avoid JwtBearer package dependency in Auth.Shared
 - 04-01: TodoPriority enum defined as internal in same file as TodoItem entity for cohesion
+- 04-03: No additional NuGet for Auth.Identity -- Identity.EntityFrameworkCore comes transitively from Auth.Shared
+- 04-03: JwtTokenService registered as scoped (not singleton) to safely resolve IOptions per request
+- 04-03: GoogleAuthOptions has no [Required] attributes and no ValidateOnStart -- empty credentials trigger safe no-op
 
 ### Pending Todos
 
@@ -100,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T17:02:00.000Z
-Stopped at: Completed 04-01-PLAN.md
-Resume file: .planning/phases/04-security-and-api-surface/04-01-SUMMARY.md
+Last session: 2026-03-18T17:09:01Z
+Stopped at: Completed 04-03-PLAN.md
+Resume file: .planning/phases/04-security-and-api-surface/04-03-SUMMARY.md
