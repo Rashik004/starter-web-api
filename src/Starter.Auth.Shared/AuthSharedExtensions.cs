@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Starter.Auth.Shared.Constants;
 
@@ -17,16 +16,10 @@ public static class AuthSharedExtensions
         })
         .AddPolicyScheme(AuthConstants.PolicyScheme, displayName: null, options =>
         {
-            options.ForwardDefaultSelector = context =>
-            {
-                string? authorization = context.Request.Headers.Authorization;
-                if (!string.IsNullOrEmpty(authorization) &&
-                    authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                {
-                    return AuthConstants.JwtScheme;
-                }
-                return IdentityConstants.ApplicationScheme;
-            };
+            // Always forward to JWT — this is an API, not a cookie-based UI.
+            // The JWT handler gracefully returns "no result" when no Bearer token
+            // is present, which is correct for [AllowAnonymous] endpoints.
+            options.ForwardDefaultSelector = _ => AuthConstants.JwtScheme;
         });
 
         builder.Services.AddAuthorization();

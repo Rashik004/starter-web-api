@@ -14,7 +14,11 @@ public static class IdentityExtensions
     /// </summary>
     public static WebApplicationBuilder AddAppIdentity(this WebApplicationBuilder builder)
     {
-        builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+        // Use AddIdentityCore (not AddIdentity) to avoid overriding the
+        // PolicyScheme defaults set by AddAppAuthShared. AddIdentity silently
+        // resets DefaultAuthenticateScheme/DefaultChallengeScheme to Identity.Application,
+        // which prevents the ForwardDefaultSelector from routing Bearer tokens to JWT.
+        builder.Services.AddIdentityCore<AppUser>(options =>
         {
             // Password policy -- relaxed for starter, tighten per your requirements
             options.Password.RequireDigit = true;
@@ -31,8 +35,10 @@ public static class IdentityExtensions
             // User
             options.User.RequireUniqueEmail = true;
         })
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AppDbContext>()
-        .AddDefaultTokenProviders();
+        .AddDefaultTokenProviders()
+        .AddSignInManager();
 
         return builder;
     }
