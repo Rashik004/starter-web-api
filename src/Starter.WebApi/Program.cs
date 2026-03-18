@@ -1,29 +1,52 @@
+using Serilog;
 using Starter.ExceptionHandling;
+using Starter.Logging;
 
-var builder = WebApplication.CreateBuilder(args);
+// --- Bootstrap Logger ---
+// Lightweight logger for startup and crash capture.
+// Replaced by the full Serilog pipeline once AddAppLogging() runs.
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-// --- Observability ---
-// (Phase 2: Serilog structured logging)
+try
+{
+    Log.Information("Starting application");
 
-// --- Security ---
-// (Phase 4: Identity + Google OAuth + JWT Bearer)
+    var builder = WebApplication.CreateBuilder(args);
 
-// --- Data ---
-// (Phase 3: EF Core + SQLite)
+    // --- Observability ---
+    builder.AddAppLogging();
 
-// --- API ---
-builder.Services.AddControllers();
-builder.Services.AddAppExceptionHandling();
+    // --- Security ---
+    // (Phase 4: Identity + Google OAuth + JWT Bearer)
 
-var app = builder.Build();
+    // --- Data ---
+    // (Phase 3: EF Core + SQLite)
 
-// --- Middleware Pipeline ---
-app.UseAppExceptionHandling(); // Must be first
-app.UseHttpsRedirection();
+    // --- API ---
+    builder.Services.AddControllers();
+    builder.Services.AddAppExceptionHandling();
 
-// (Phase 2: app.UseSerilogRequestLogging())
-// (Phase 4: app.UseAuthentication(), app.UseAuthorization())
+    var app = builder.Build();
 
-app.MapControllers();
+    // --- Middleware Pipeline ---
+    app.UseAppExceptionHandling(); // Must be first
+    app.UseHttpsRedirection();
+    app.UseAppRequestLogging();    // After exception handler and HTTPS redirect
 
-app.Run();
+    // (Phase 4: app.UseAuthentication(), app.UseAuthorization())
+
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
