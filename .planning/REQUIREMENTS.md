@@ -57,7 +57,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **DATA-02**: SQL Server provider is available and swappable via configuration
 - [x] **DATA-03**: PostgreSQL provider is available and swappable via configuration
 - [x] **DATA-04**: Separate migration assemblies exist per database provider
-- [ ] **DATA-05**: Migration helper scripts are provided (dotnet ef migrations add / database update)
+- [x] **DATA-05**: Migration helper scripts are provided (dotnet ef migrations add / database update)
 - [x] **DATA-06**: A repository pattern or thin service layer wraps DbContext
 
 ### Health Checks
@@ -191,7 +191,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-02 | Phase 3 | Complete |
 | DATA-03 | Phase 3 | Complete |
 | DATA-04 | Phase 3 | Complete |
-| DATA-05 | Phase 3 | Pending |
+| DATA-05 | Phase 3 | Complete |
 | DATA-06 | Phase 3 | Complete |
 | AUTH-01 | Phase 4 | Pending |
 | AUTH-02 | Phase 4 | Pending |

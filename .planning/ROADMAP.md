@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Solution Scaffold and Foundation** - Host + Shared projects, extension method composition pattern, IOptions conventions, grouped Program.cs, and global exception handling
 - [x] **Phase 2: Observability** - Serilog structured logging module with two-stage bootstrap and configurable sinks (completed 2026-03-18)
-- [ ] **Phase 3: Data Layer** - EF Core module with SQLite default, multi-provider migration assemblies, and provider switching
+- [x] **Phase 3: Data Layer** - EF Core module with SQLite default, multi-provider migration assemblies, and provider switching (completed 2026-03-18)
 - [ ] **Phase 4: Security and API Surface** - Auth module (Identity + Google OAuth + JWT Bearer), API versioning, OpenAPI/Scalar docs, CORS, and FluentValidation
 - [ ] **Phase 5: Production Hardening** - Rate limiting, caching, response compression, standardized response envelope, and health check endpoints
 - [ ] **Phase 6: Testing and Validation** - Integration tests, unit tests, architectural tests, and module removal smoke tests
@@ -64,8 +64,8 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Create Starter.Data module with EF Core 10 multi-provider support (SQLite/SqlServer/PostgreSQL), AppDbContext, DatabaseOptions, TodoItem entity, 3 migration assembly projects with markers, and IRepository<T>/ITodoService contracts in Shared
-- [ ] 03-02-PLAN.md -- Implement EfRepository<T> and TodoService, create TodoController with CRUD endpoints and DTOs, wire AddAppData/UseAppData into Program.cs, configure appsettings.json Database section
-- [ ] 03-03-PLAN.md -- Create migration helper scripts (bash + PowerShell), upgrade dotnet-ef tool, generate initial SQLite migration with seed data, and human-verify end-to-end CRUD
+- [x] 03-02-PLAN.md -- Implement EfRepository<T> and TodoService, create TodoController with CRUD endpoints and DTOs, wire AddAppData/UseAppData into Program.cs, configure appsettings.json Database section
+- [x] 03-03-PLAN.md -- Create migration helper scripts (bash + PowerShell), upgrade dotnet-ef tool, generate initial SQLite migration with seed data, and human-verify end-to-end CRUD
 
 ### Phase 4: Security and API Surface
 **Goal**: The API has a complete authentication system with three independently removable auth layers, versioned endpoints, interactive documentation, input validation, and CORS -- collectively defining the public API contract
@@ -127,7 +127,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
 | 2. Observability | 2/2 | Complete   | 2026-03-18 |
-| 3. Data Layer | 2/3 | In Progress|  |
+| 3. Data Layer | 3/3 | Complete   | 2026-03-18 |
 | 4. Security and API Surface | 0/? | Not started | - |
 | 5. Production Hardening | 0/? | Not started | - |
 | 6. Testing and Validation | 0/? | Not started | - |
