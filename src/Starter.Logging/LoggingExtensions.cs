@@ -34,14 +34,24 @@ public static class LoggingExtensions
     }
 
     /// <summary>
-    /// Adds Serilog request logging middleware with health check exclusion,
-    /// dynamic log levels by HTTP status code, and configurable per-request enrichment.
+    /// Adds correlation ID middleware and Serilog request logging middleware with
+    /// health check exclusion, dynamic log levels by HTTP status code,
+    /// and configurable per-request enrichment.
     /// </summary>
     /// <param name="app">The web application.</param>
     /// <returns>The application for fluent chaining.</returns>
     public static WebApplication UseAppRequestLogging(this WebApplication app)
     {
-        // Stub -- full implementation in Task 3
+        // Sync correlation ID header with TraceIdentifier before any logging
+        app.UseMiddleware<Middleware.CorrelationIdMiddleware>();
+
+        app.UseSerilogRequestLogging(options =>
+        {
+            options.MessageTemplate = RequestLoggingConfiguration.MessageTemplate;
+            options.GetLevel = RequestLoggingConfiguration.GetLevel;
+            options.EnrichDiagnosticContext = RequestLoggingConfiguration.EnrichDiagnosticContext;
+        });
+
         return app;
     }
 }
