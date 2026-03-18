@@ -1,4 +1,5 @@
 using Serilog;
+using Starter.Data;
 using Starter.ExceptionHandling;
 using Starter.Logging;
 
@@ -23,7 +24,7 @@ try
     // (Phase 4: Identity + Google OAuth + JWT Bearer)
 
     // --- Data ---
-    // (Phase 3: EF Core + SQLite)
+    builder.AddAppData();
 
     // --- API ---
     builder.Services.AddControllers();
@@ -35,6 +36,7 @@ try
     app.UseAppExceptionHandling(); // Must be first
     app.UseHttpsRedirection();
     app.UseAppRequestLogging();    // After exception handler and HTTPS redirect
+    app.UseAppData();              // Auto-migrate if configured
 
     // (Phase 4: app.UseAuthentication(), app.UseAuthorization())
 
