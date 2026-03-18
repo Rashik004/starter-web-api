@@ -11,6 +11,7 @@
     <Project Path="src/Starter.Auth.Shared/Starter.Auth.Shared.csproj" />
     <Project Path="src/Starter.Data/Starter.Data.csproj" />
     <Project Path="src/Starter.Versioning/Starter.Versioning.csproj" />
+    <Project Path="src/Starter.Cors/Starter.Cors.csproj" />
   </Folder>
   <Folder Name="/Migrations/">
     <Project Path="src/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />
