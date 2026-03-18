@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Starter.Auth.Shared.Entities;
 using Starter.Data.Entities;
 
 namespace Starter.Data;
 
-internal class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+internal class AppDbContext(DbContextOptions<AppDbContext> options)
+    : IdentityDbContext<AppUser>(options)
 {
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
 

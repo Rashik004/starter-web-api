@@ -10,3 +10,5 @@ public interface ITodoService
 }
 
 public sealed record TodoItemDto(int Id, string Title, bool IsComplete, DateTime CreatedAt);
+
+public sealed record TodoItemV2Dto(int Id, string Title, bool IsComplete, DateTime CreatedAt, string Priority, DateTime? DueDate, string? Tags);
