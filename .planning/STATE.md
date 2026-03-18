@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-05-PLAN.md
-last_updated: "2026-03-18T17:19:33Z"
-last_activity: 2026-03-18 -- Plan 04-05 executed (AuthController, versioned TodoControllers, FluentValidation validators)
+stopped_at: Completed 04-06-PLAN.md
+last_updated: "2026-03-18T17:55:00Z"
+last_activity: 2026-03-18 -- Plan 04-06 executed (Program.cs wiring, appsettings, end-to-end verification). Phase 4 complete.
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 13
-  completed_plans: 12
-  percent: 92
+  completed_plans: 13
+  percent: 100
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 4: Security and API Surface in progress. Controllers and validation complete. Next: Plan 04-06 (Program.cs wiring).
+**Current focus:** Phase 4 complete. All 13 plans through Phase 4 executed. Next: Phase 5 (Production Hardening) requires planning.
 
 ## Current Position
 
-Phase: 4 of 6 (Security and API Surface)
-Plan: 6 of 6 in current phase (5 complete)
-Status: Phase 4 in progress -- Plan 04-05 complete
-Last activity: 2026-03-18 -- Plan 04-05 executed (AuthController, versioned TodoControllers, FluentValidation validators)
+Phase: 4 of 6 (Security and API Surface) -- COMPLETE
+Plan: 6 of 6 in current phase (6 complete)
+Status: Phase 4 complete -- all plans executed
+Last activity: 2026-03-18 -- Plan 04-06 executed (Program.cs wiring, appsettings, end-to-end verification). Phase 4 complete.
 
-Progress: [█████████░] 92% (12/13 plans)
+Progress: [██████████] 100% (13/13 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 5min
-- Total execution time: 0.9 hours
+- Total execution time: 1.0 hours
 
 **By Phase:**
 
@@ -46,10 +46,10 @@ Progress: [█████████░] 92% (12/13 plans)
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
 | 03 | 3 | 12min | 4min |
-| 04 | 6 | 27min | 5min |
+| 04 | 6 | 35min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 6min, 3min, 7min, 3min
+- Last 5 plans: 6min, 3min, 7min, 3min, 8min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -96,6 +96,9 @@ Recent decisions affecting current work:
 - 04-04: Used OpenApiSecuritySchemeReference instead of OpenApiSecurityScheme+OpenApiReference for security requirements (v2.0.0 API)
 - 04-05: AuthController uses [ApiVersionNeutral] -- auth is infrastructure, not a versioned business API
 - 04-05: FluentValidation.DependencyInjectionExtensions added directly to Host csproj for explicitness despite transitive availability
+- 04-06: Used AddIdentityCore instead of AddIdentity to prevent Identity from overriding PolicyScheme ForwardDefaultSelector with cookie defaults
+- 04-06: Development JWT SecretKey is a non-production placeholder so app starts without User Secrets setup
+- 04-06: No Google credentials in appsettings.Development.json -- empty strings trigger safe no-op in AddAppGoogle()
 
 ### Pending Todos
 
@@ -107,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T17:19:33Z
-Stopped at: Completed 04-05-PLAN.md
-Resume file: .planning/phases/04-security-and-api-surface/04-05-SUMMARY.md
+Last session: 2026-03-18T17:55:00Z
+Stopped at: Completed 04-06-PLAN.md -- Phase 4 complete
+Resume file: .planning/phases/04-security-and-api-surface/04-06-SUMMARY.md

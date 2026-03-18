@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Solution Scaffold and Foundation** - Host + Shared projects, extension method composition pattern, IOptions conventions, grouped Program.cs, and global exception handling
 - [x] **Phase 2: Observability** - Serilog structured logging module with two-stage bootstrap and configurable sinks (completed 2026-03-18)
 - [x] **Phase 3: Data Layer** - EF Core module with SQLite default, multi-provider migration assemblies, and provider switching (completed 2026-03-18)
-- [ ] **Phase 4: Security and API Surface** - Auth module (Identity + Google OAuth + JWT Bearer), API versioning, OpenAPI/Scalar docs, CORS, and FluentValidation
+- [x] **Phase 4: Security and API Surface** - Auth module (Identity + Google OAuth + JWT Bearer), API versioning, OpenAPI/Scalar docs, CORS, and FluentValidation (completed 2026-03-18)
 - [ ] **Phase 5: Production Hardening** - Rate limiting, caching, response compression, standardized response envelope, and health check endpoints
 - [ ] **Phase 6: Testing and Validation** - Integration tests, unit tests, architectural tests, and module removal smoke tests
 
@@ -82,12 +82,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Create Starter.Auth.Shared (AppUser, AuthConstants, JwtOptions, PolicyScheme), modify Data layer to IdentityDbContext<AppUser>, expand TodoItem with v2 fields, generate SQLite migration
-- [ ] 04-02-PLAN.md -- Create Starter.Versioning (URL segment versioning), Starter.Cors (config-driven CORS policies), and Starter.Validation (FluentValidation 12 manual injection)
-- [ ] 04-03-PLAN.md -- Create Starter.Auth.Identity (ASP.NET Identity with EF Core stores), Starter.Auth.Jwt (JWT Bearer + JwtTokenService), and Starter.Auth.Google (Google OAuth handler)
-- [ ] 04-04-PLAN.md -- Create Starter.OpenApi (OpenAPI 3.1 per-version documents, Scalar UI with config-driven visibility, Bearer security scheme transformer)
-- [ ] 04-05-PLAN.md -- Create AuthController (register/login/Google OAuth), version TodoController (v1), create TodoV2Controller (v2), add FluentValidation validators
-- [ ] 04-06-PLAN.md -- Wire all Phase 4 modules into Program.cs, configure appsettings.json, enable XML docs, and human-verify end-to-end auth flow
+- [x] 04-01-PLAN.md -- Create Starter.Auth.Shared (AppUser, AuthConstants, JwtOptions, PolicyScheme), modify Data layer to IdentityDbContext<AppUser>, expand TodoItem with v2 fields, generate SQLite migration
+- [x] 04-02-PLAN.md -- Create Starter.Versioning (URL segment versioning), Starter.Cors (config-driven CORS policies), and Starter.Validation (FluentValidation 12 manual injection)
+- [x] 04-03-PLAN.md -- Create Starter.Auth.Identity (ASP.NET Identity with EF Core stores), Starter.Auth.Jwt (JWT Bearer + JwtTokenService), and Starter.Auth.Google (Google OAuth handler)
+- [x] 04-04-PLAN.md -- Create Starter.OpenApi (OpenAPI 3.1 per-version documents, Scalar UI with config-driven visibility, Bearer security scheme transformer)
+- [x] 04-05-PLAN.md -- Create AuthController (register/login/Google OAuth), version TodoController (v1), create TodoV2Controller (v2), add FluentValidation validators
+- [x] 04-06-PLAN.md -- Wire all Phase 4 modules into Program.cs, configure appsettings.json, enable XML docs, and human-verify end-to-end auth flow
 
 ### Phase 5: Production Hardening
 **Goal**: The API has production-grade rate limiting, caching, response compression, a standardized response envelope, and comprehensive health check endpoints -- all independently removable
@@ -131,6 +131,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
 | 2. Observability | 2/2 | Complete   | 2026-03-18 |
 | 3. Data Layer | 3/3 | Complete   | 2026-03-18 |
-| 4. Security and API Surface | 5/6 | In Progress|  |
+| 4. Security and API Surface | 6/6 | Complete | 2026-03-18 |
 | 5. Production Hardening | 0/? | Not started | - |
 | 6. Testing and Validation | 0/? | Not started | - |
