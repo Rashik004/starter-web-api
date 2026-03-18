@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Scaffold solution structure (Host + Shared + ExceptionHandling projects), exception types, extension method composition pattern, IOptions with ValidateOnStart, grouped Program.cs
+- [x] 01-01-PLAN.md -- Scaffold solution structure (Host + Shared + ExceptionHandling projects), exception types, extension method composition pattern, IOptions with ValidateOnStart, grouped Program.cs
 - [ ] 01-02-PLAN.md -- Implement GlobalExceptionHandler with typed exception mapping and RFC 7807 ProblemDetails, create DiagnosticsController for verification
 
 ### Phase 2: Observability
@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solution Scaffold and Foundation | 0/2 | Planned | - |
+| 1. Solution Scaffold and Foundation | 1/2 | In Progress | - |
 | 2. Observability | 0/? | Not started | - |
 | 3. Data Layer | 0/? | Not started | - |
 | 4. Security and API Surface | 0/? | Not started | - |

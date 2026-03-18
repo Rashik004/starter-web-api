@@ -9,19 +9,19 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Foundation
 
-- [ ] **FOUND-01**: Solution contains a Shared class library with only contracts (response envelope, config constants, cross-module interfaces)
-- [ ] **FOUND-02**: Solution contains a Host Web API project that references only the modules it needs
-- [ ] **FOUND-03**: Each module is a separate class library exposing `AddStarter{Module}` on IServiceCollection and optionally `UseStarter{Module}` on WebApplication
-- [ ] **FOUND-04**: Program.cs uses grouped-by-concern layout (Observability, Security, Data, API sections) with one extension method call per module
-- [ ] **FOUND-05**: Removing a module requires only deleting the extension method call(s) in Program.cs and the project reference -- no other changes
-- [ ] **FOUND-06**: No module references another module directly -- all cross-module communication flows through interfaces in Shared resolved via DI
-- [ ] **FOUND-07**: All class library projects use `internal` visibility by default; only extension methods and contracts are public
+- [x] **FOUND-01**: Solution contains a Shared class library with only contracts (response envelope, config constants, cross-module interfaces)
+- [x] **FOUND-02**: Solution contains a Host Web API project that references only the modules it needs
+- [x] **FOUND-03**: Each module is a separate class library exposing `AddStarter{Module}` on IServiceCollection and optionally `UseStarter{Module}` on WebApplication
+- [x] **FOUND-04**: Program.cs uses grouped-by-concern layout (Observability, Security, Data, API sections) with one extension method call per module
+- [x] **FOUND-05**: Removing a module requires only deleting the extension method call(s) in Program.cs and the project reference -- no other changes
+- [x] **FOUND-06**: No module references another module directly -- all cross-module communication flows through interfaces in Shared resolved via DI
+- [x] **FOUND-07**: All class library projects use `internal` visibility by default; only extension methods and contracts are public
 
 ### Configuration
 
-- [ ] **CONF-01**: Each module owns a strongly-typed config section in appsettings.json via IOptions<T>
-- [ ] **CONF-02**: All IOptions<T> registrations use ValidateDataAnnotations and ValidateOnStart to catch misconfiguration at startup
-- [ ] **CONF-03**: Guidance for User Secrets (development), Environment Variables, and Azure Key Vault (production) is documented
+- [x] **CONF-01**: Each module owns a strongly-typed config section in appsettings.json via IOptions<T>
+- [x] **CONF-02**: All IOptions<T> registrations use ValidateDataAnnotations and ValidateOnStart to catch misconfiguration at startup
+- [x] **CONF-03**: Guidance for User Secrets (development), Environment Variables, and Azure Key Vault (production) is documented
 
 ### Exception Handling
 
@@ -166,16 +166,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
-| FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
-| FOUND-04 | Phase 1 | Pending |
-| FOUND-05 | Phase 1 | Pending |
-| FOUND-06 | Phase 1 | Pending |
-| FOUND-07 | Phase 1 | Pending |
-| CONF-01 | Phase 1 | Pending |
-| CONF-02 | Phase 1 | Pending |
-| CONF-03 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
+| FOUND-02 | Phase 1 | Complete |
+| FOUND-03 | Phase 1 | Complete |
+| FOUND-04 | Phase 1 | Complete |
+| FOUND-05 | Phase 1 | Complete |
+| FOUND-06 | Phase 1 | Complete |
+| FOUND-07 | Phase 1 | Complete |
+| CONF-01 | Phase 1 | Complete |
+| CONF-02 | Phase 1 | Complete |
+| CONF-03 | Phase 1 | Complete |
 | EXCP-01 | Phase 1 | Pending |
 | EXCP-02 | Phase 1 | Pending |
 | EXCP-03 | Phase 1 | Pending |
