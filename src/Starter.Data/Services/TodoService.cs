@@ -56,6 +56,52 @@ internal sealed class TodoService(IRepository<TodoItem> repository) : ITodoServi
         return true;
     }
 
+    public async Task<IReadOnlyList<TodoItemV2Dto>> GetAllV2Async(CancellationToken cancellationToken = default)
+    {
+        var items = await repository.GetAllAsync(cancellationToken);
+        return items.Select(MapToV2Dto).ToList();
+    }
+
+    public async Task<TodoItemV2Dto?> GetByIdV2Async(int id, CancellationToken cancellationToken = default)
+    {
+        var item = await repository.GetByIdAsync(id, cancellationToken);
+        return item is null ? null : MapToV2Dto(item);
+    }
+
+    public async Task<TodoItemV2Dto> CreateV2Async(string title, string priority, DateTime? dueDate, string? tags, CancellationToken cancellationToken = default)
+    {
+        var item = new TodoItem
+        {
+            Title = title,
+            IsComplete = false,
+            CreatedAt = DateTime.UtcNow,
+            Priority = Enum.TryParse<TodoPriority>(priority, ignoreCase: true, out var p) ? p : TodoPriority.Medium,
+            DueDate = dueDate,
+            Tags = tags
+        };
+
+        var created = await repository.AddAsync(item, cancellationToken);
+        return MapToV2Dto(created);
+    }
+
+    public async Task<TodoItemV2Dto?> UpdateV2Async(int id, string title, bool isComplete, string priority, DateTime? dueDate, string? tags, CancellationToken cancellationToken = default)
+    {
+        var item = await repository.GetByIdAsync(id, cancellationToken);
+        if (item is null)
+            throw new NotFoundException($"TodoItem with id {id} not found");
+
+        item.Title = title;
+        item.IsComplete = isComplete;
+        item.Priority = Enum.TryParse<TodoPriority>(priority, ignoreCase: true, out var p) ? p : TodoPriority.Medium;
+        item.DueDate = dueDate;
+        item.Tags = tags;
+        await repository.UpdateAsync(item, cancellationToken);
+        return MapToV2Dto(item);
+    }
+
     private static TodoItemDto MapToDto(TodoItem item)
         => new(item.Id, item.Title, item.IsComplete, item.CreatedAt);
+
+    private static TodoItemV2Dto MapToV2Dto(TodoItem item)
+        => new(item.Id, item.Title, item.IsComplete, item.CreatedAt, item.Priority.ToString(), item.DueDate, item.Tags);
 }
