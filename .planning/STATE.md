@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-18T14:31:00.000Z"
-last_activity: 2026-03-18 -- Plan 03-01 executed (EF Core data module + migration assemblies)
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-03-18T14:38:08.000Z"
+last_activity: 2026-03-18 -- Plan 03-02 executed (repository, service, API wiring)
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 7
-  completed_plans: 5
-  percent: 71
+  completed_plans: 6
+  percent: 86
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 3: Data Layer in progress. Starter.Data module, migration assemblies, and shared contracts created. Next: Plan 03-02 (service/API wiring).
+**Current focus:** Phase 3: Data Layer in progress. Full CRUD vertical slice complete (TodoController -> TodoService -> EfRepository -> AppDbContext). Next: Plan 03-03 (migration generation).
 
 ## Current Position
 
 Phase: 3 of 6 (Data Layer)
-Plan: 1 of 3 in current phase
-Status: Plan 03-01 Complete
-Last activity: 2026-03-18 -- Plan 03-01 executed (EF Core data module + migration assemblies)
+Plan: 2 of 3 in current phase
+Status: Plan 03-02 Complete
+Last activity: 2026-03-18 -- Plan 03-02 executed (repository, service, API wiring)
 
-Progress: [#######---] 71% (5/7 plans)
+Progress: [#########-] 86% (6/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 6min
-- Total execution time: 0.4 hours
+- Total plans completed: 6
+- Average duration: 5min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
@@ -45,10 +45,10 @@ Progress: [#######---] 71% (5/7 plans)
 |-------|-------|-------|----------|
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
-| 03 | 1 | 5min | 5min |
+| 03 | 2 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 8min, 6min, 5min
+- Last 5 plans: 8min, 6min, 6min, 5min, 3min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -77,6 +77,9 @@ Recent decisions affecting current work:
 - 03-01: CommandTimeout configured per-provider via relational options builder (DbContextOptionsBuilder lacks SetCommandTimeout)
 - 03-01: Provided full EfRepository/TodoService implementations instead of NotImplementedException stubs
 - 03-01: AppDbContext is internal class (not sealed) to support Phase 4 Identity extensibility
+- 03-02: TodoService.UpdateAsync throws NotFoundException (not null return) for GlobalExceptionHandler integration
+- 03-02: Database config section placed between ExceptionHandling and Serilog in appsettings.json
+- 03-02: EnableSensitiveDataLogging=true in Development appsettings only, false in base config
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T14:31:00.000Z
-Stopped at: Completed 03-01-PLAN.md
-Resume file: .planning/phases/03-data-layer/03-01-SUMMARY.md
+Last session: 2026-03-18T14:38:08.000Z
+Stopped at: Completed 03-02-PLAN.md
+Resume file: .planning/phases/03-data-layer/03-02-SUMMARY.md

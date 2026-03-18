@@ -127,7 +127,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
 | 2. Observability | 2/2 | Complete   | 2026-03-18 |
-| 3. Data Layer | 1/3 | In Progress | - |
+| 3. Data Layer | 2/3 | In Progress|  |
 | 4. Security and API Surface | 0/? | Not started | - |
 | 5. Production Hardening | 0/? | Not started | - |
 | 6. Testing and Validation | 0/? | Not started | - |
