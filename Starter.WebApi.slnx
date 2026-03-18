@@ -15,6 +15,7 @@
     <Project Path="src/Starter.OpenApi/Starter.OpenApi.csproj" />
     <Project Path="src/Starter.Validation/Starter.Validation.csproj" />
     <Project Path="src/Starter.Auth.Identity/Starter.Auth.Identity.csproj" />
+    <Project Path="src/Starter.Auth.Jwt/Starter.Auth.Jwt.csproj" />
   </Folder>
   <Folder Name="/Migrations/">
     <Project Path="src/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />
