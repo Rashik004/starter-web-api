@@ -4,7 +4,7 @@ using Starter.Shared.Contracts;
 namespace Starter.Data.Repositories;
 
 /// <summary>
-/// Generic EF Core repository. Stub implementation -- full logic in Plan 02.
+/// Generic EF Core repository implementing full CRUD operations against <see cref="AppDbContext"/>.
 /// </summary>
 internal sealed class EfRepository<T>(AppDbContext context) : IRepository<T> where T : class
 {
