@@ -99,12 +99,13 @@ Plans:
   3. Response compression (Gzip/Brotli) is available but disabled by default; enabling it requires one extension method call, and HTTPS compression risks are documented
   4. All endpoints return a consistent response envelope format; the envelope is opt-in via attribute/filter and removing the response module does not affect other endpoints
   5. /health, /health/ready, and /health/live return appropriate status; database connectivity is checked; a sample custom health check for external dependencies is included
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
-- [ ] 05-03: TBD
+- [ ] 05-01-PLAN.md -- Create Starter.RateLimiting (three named policies + global IP limiter) and Starter.Compression (Gzip/Brotli with HTTPS security docs) modules
+- [ ] 05-02-PLAN.md -- Create ApiResponse<T> envelope in Shared, Starter.Caching (IMemoryCache + IDistributedCache with Redis swap), and Starter.Responses (opt-in ApiResponseFilter via ServiceFilter)
+- [ ] 05-03-PLAN.md -- Create Starter.HealthChecks with /health, /health/ready, /health/live endpoints, AddDbContextCheck for DB, and custom ExternalServiceHealthCheck
+- [ ] 05-04-PLAN.md -- Wire all Phase 5 modules into Program.cs, configure appsettings.json, add CacheDemoController, apply rate limiting and response envelope attributes to controllers
 
 ### Phase 6: Testing and Validation
 **Goal**: The starter repo has comprehensive test coverage that validates module functionality and -- critically -- proves the core differentiator: any module can be removed without breaking the build
@@ -132,5 +133,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Observability | 2/2 | Complete   | 2026-03-18 |
 | 3. Data Layer | 3/3 | Complete   | 2026-03-18 |
 | 4. Security and API Surface | 6/6 | Complete | 2026-03-18 |
-| 5. Production Hardening | 0/? | Not started | - |
+| 5. Production Hardening | 0/4 | Not started | - |
 | 6. Testing and Validation | 0/? | Not started | - |
