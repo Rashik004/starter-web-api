@@ -48,7 +48,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Create Starter.Logging module with SinkRegistrar (Enabled flag pattern), RequestLoggingConfiguration (health check exclusion, dynamic log levels), CorrelationIdMiddleware, and AddAppLogging/UseAppRequestLogging extension methods
+- [x] 02-01-PLAN.md -- Create Starter.Logging module with SinkRegistrar (Enabled flag pattern), RequestLoggingConfiguration (health check exclusion, dynamic log levels), CorrelationIdMiddleware, and AddAppLogging/UseAppRequestLogging extension methods
 - [ ] 02-02-PLAN.md -- Wire Program.cs with two-stage bootstrap (try/catch/finally), configure appsettings.json with full Serilog sink configuration, and human-verify structured logging output
 
 ### Phase 3: Data Layer
@@ -125,7 +125,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
-| 2. Observability | 0/2 | Not started | - |
+| 2. Observability | 1/2 | In progress | - |
 | 3. Data Layer | 0/? | Not started | - |
 | 4. Security and API Surface | 0/? | Not started | - |
 | 5. Production Hardening | 0/? | Not started | - |

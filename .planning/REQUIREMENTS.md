@@ -33,12 +33,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Logging
 
-- [ ] **LOG-01**: Serilog is the logging pipeline with two-stage bootstrap pattern
+- [x] **LOG-01**: Serilog is the logging pipeline with two-stage bootstrap pattern
 - [ ] **LOG-02**: Console sink is always on in Development
-- [ ] **LOG-03**: File sink is configurable via appsettings.json
-- [ ] **LOG-04**: Azure Application Insights sink available via Serilog.Sinks.OpenTelemetry
-- [ ] **LOG-05**: Seq sink is configurable for local structured log viewing
-- [ ] **LOG-06**: Sink configuration is entirely driven by appsettings.json -- no code changes to enable/disable sinks
+- [x] **LOG-03**: File sink is configurable via appsettings.json
+- [x] **LOG-04**: Azure Application Insights sink available via Serilog.Sinks.OpenTelemetry
+- [x] **LOG-05**: Seq sink is configurable for local structured log viewing
+- [x] **LOG-06**: Sink configuration is entirely driven by appsettings.json -- no code changes to enable/disable sinks
 
 ### Authentication & Authorization
 
@@ -181,12 +181,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXCP-03 | Phase 1 | Complete |
 | EXCP-04 | Phase 1 | Complete |
 | EXCP-05 | Phase 1 | Complete |
-| LOG-01 | Phase 2 | Pending |
+| LOG-01 | Phase 2 | Complete |
 | LOG-02 | Phase 2 | Pending |
-| LOG-03 | Phase 2 | Pending |
-| LOG-04 | Phase 2 | Pending |
-| LOG-05 | Phase 2 | Pending |
-| LOG-06 | Phase 2 | Pending |
+| LOG-03 | Phase 2 | Complete |
+| LOG-04 | Phase 2 | Complete |
+| LOG-05 | Phase 2 | Complete |
+| LOG-06 | Phase 2 | Complete |
 | DATA-01 | Phase 3 | Pending |
 | DATA-02 | Phase 3 | Pending |
 | DATA-03 | Phase 3 | Pending |
