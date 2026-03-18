@@ -8,7 +8,9 @@
   <Folder Name="/Modules/">
     <Project Path="src/Starter.ExceptionHandling/Starter.ExceptionHandling.csproj" />
     <Project Path="src/Starter.Logging/Starter.Logging.csproj" />
+    <Project Path="src/Starter.Auth.Shared/Starter.Auth.Shared.csproj" />
     <Project Path="src/Starter.Data/Starter.Data.csproj" />
+    <Project Path="src/Starter.Versioning/Starter.Versioning.csproj" />
   </Folder>
   <Folder Name="/Migrations/">
     <Project Path="src/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />
