@@ -8,5 +8,11 @@
   <Folder Name="/Modules/">
     <Project Path="src/Starter.ExceptionHandling/Starter.ExceptionHandling.csproj" />
     <Project Path="src/Starter.Logging/Starter.Logging.csproj" />
+    <Project Path="src/Starter.Data/Starter.Data.csproj" />
+  </Folder>
+  <Folder Name="/Migrations/">
+    <Project Path="src/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />
+    <Project Path="src/Starter.Data.Migrations.SqlServer/Starter.Data.Migrations.SqlServer.csproj" />
+    <Project Path="src/Starter.Data.Migrations.PostgreSql/Starter.Data.Migrations.PostgreSql.csproj" />
   </Folder>
 </Solution>

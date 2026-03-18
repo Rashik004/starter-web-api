@@ -10,6 +10,10 @@
     <ProjectReference Include="..\Starter.Shared\Starter.Shared.csproj" />
     <ProjectReference Include="..\Starter.ExceptionHandling\Starter.ExceptionHandling.csproj" />
     <ProjectReference Include="..\Starter.Logging\Starter.Logging.csproj" />
+    <ProjectReference Include="..\Starter.Data\Starter.Data.csproj" />
+    <ProjectReference Include="..\Starter.Data.Migrations.Sqlite\Starter.Data.Migrations.Sqlite.csproj" />
+    <ProjectReference Include="..\Starter.Data.Migrations.SqlServer\Starter.Data.Migrations.SqlServer.csproj" />
+    <ProjectReference Include="..\Starter.Data.Migrations.PostgreSql\Starter.Data.Migrations.PostgreSql.csproj" />
   </ItemGroup>
 
 </Project>
