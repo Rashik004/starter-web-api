@@ -76,10 +76,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### API Documentation
 
-- [ ] **DOCS-01**: OpenAPI 3.1 document is generated via Microsoft.AspNetCore.OpenApi
-- [ ] **DOCS-02**: Scalar provides the interactive API documentation UI
-- [ ] **DOCS-03**: JWT Bearer auth is integrated (authorize button in Scalar UI)
-- [ ] **DOCS-04**: XML comment documentation is wired up and visible in API docs
+- [x] **DOCS-01**: OpenAPI 3.1 document is generated via Microsoft.AspNetCore.OpenApi
+- [x] **DOCS-02**: Scalar provides the interactive API documentation UI
+- [x] **DOCS-03**: JWT Bearer auth is integrated (authorize button in Scalar UI)
+- [x] **DOCS-04**: XML comment documentation is wired up and visible in API docs
 
 ### API Versioning
 
@@ -204,10 +204,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORS-01 | Phase 4 | Complete |
 | CORS-02 | Phase 4 | Complete |
 | CORS-03 | Phase 4 | Complete |
-| DOCS-01 | Phase 4 | Pending |
-| DOCS-02 | Phase 4 | Pending |
-| DOCS-03 | Phase 4 | Pending |
-| DOCS-04 | Phase 4 | Pending |
+| DOCS-01 | Phase 4 | Complete |
+| DOCS-02 | Phase 4 | Complete |
+| DOCS-03 | Phase 4 | Complete |
+| DOCS-04 | Phase 4 | Complete |
 | VERS-01 | Phase 4 | Complete |
 | VERS-02 | Phase 4 | Complete |
 | VERS-03 | Phase 4 | Pending |

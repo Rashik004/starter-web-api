@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in-progress
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-03-18T17:09:01Z"
-last_activity: 2026-03-18 -- Plan 04-03 executed (Auth.Identity, Auth.Jwt, Auth.Google modules)
+status: executing
+stopped_at: Completed 04-04-PLAN.md
+last_updated: "2026-03-18T17:12:29Z"
+last_activity: 2026-03-18 -- Plan 04-04 executed (OpenAPI multi-version docs, Bearer transformer, Scalar UI)
 progress:
   total_phases: 6
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 4: Security and API Surface in progress. Auth.Shared, Auth.Identity, Auth.Jwt, Auth.Google modules complete. Next: Plan 04-04 (Auth wiring in Program.cs).
+**Current focus:** Phase 4: Security and API Surface in progress. Auth modules and OpenAPI complete. Next: Plan 04-05 (Rate Limiting).
 
 ## Current Position
 
 Phase: 4 of 6 (Security and API Surface)
-Plan: 4 of 6 in current phase (4 complete)
-Status: Phase 4 in progress -- Plan 04-03 complete
-Last activity: 2026-03-18 -- Plan 04-03 executed (Auth.Identity, Auth.Jwt, Auth.Google modules)
+Plan: 5 of 6 in current phase (4 complete)
+Status: Phase 4 in progress -- Plan 04-04 complete
+Last activity: 2026-03-18 -- Plan 04-04 executed (OpenAPI multi-version docs, Bearer transformer, Scalar UI)
 
 Progress: [########--] 85% (11/13 plans)
 
@@ -46,10 +46,10 @@ Progress: [########--] 85% (11/13 plans)
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
 | 03 | 3 | 12min | 4min |
-| 04 | 4 | 17min | 4min |
+| 04 | 5 | 24min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 4min, 4min, 6min, 3min
+- Last 5 plans: 4min, 4min, 6min, 3min, 7min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -92,6 +92,8 @@ Recent decisions affecting current work:
 - 04-03: No additional NuGet for Auth.Identity -- Identity.EntityFrameworkCore comes transitively from Auth.Shared
 - 04-03: JwtTokenService registered as scoped (not singleton) to safely resolve IOptions per request
 - 04-03: GoogleAuthOptions has no [Required] attributes and no ValidateOnStart -- empty credentials trigger safe no-op
+- 04-04: Adapted BearerSecuritySchemeTransformer for Microsoft.OpenApi v2.0.0 breaking changes (namespace, property, and type changes)
+- 04-04: Used OpenApiSecuritySchemeReference instead of OpenApiSecurityScheme+OpenApiReference for security requirements (v2.0.0 API)
 
 ### Pending Todos
 
@@ -103,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T17:09:01Z
-Stopped at: Completed 04-03-PLAN.md
-Resume file: .planning/phases/04-security-and-api-surface/04-03-SUMMARY.md
+Last session: 2026-03-18T17:12:29Z
+Stopped at: Completed 04-04-PLAN.md
+Resume file: .planning/phases/04-security-and-api-surface/04-04-SUMMARY.md
