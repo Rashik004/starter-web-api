@@ -25,11 +25,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Exception Handling
 
-- [ ] **EXCP-01**: Global exception handling catches all unhandled exceptions
-- [ ] **EXCP-02**: All error responses use RFC 7807 Problem Details format
-- [ ] **EXCP-03**: Stack traces are included in Development, hidden in Production
-- [ ] **EXCP-04**: Exceptions are logged through the structured logging pipeline
-- [ ] **EXCP-05**: Uses built-in IExceptionHandler (not custom middleware)
+- [x] **EXCP-01**: Global exception handling catches all unhandled exceptions
+- [x] **EXCP-02**: All error responses use RFC 7807 Problem Details format
+- [x] **EXCP-03**: Stack traces are included in Development, hidden in Production
+- [x] **EXCP-04**: Exceptions are logged through the structured logging pipeline
+- [x] **EXCP-05**: Uses built-in IExceptionHandler (not custom middleware)
 
 ### Logging
 
@@ -176,11 +176,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-01 | Phase 1 | Complete |
 | CONF-02 | Phase 1 | Complete |
 | CONF-03 | Phase 1 | Complete |
-| EXCP-01 | Phase 1 | Pending |
-| EXCP-02 | Phase 1 | Pending |
-| EXCP-03 | Phase 1 | Pending |
-| EXCP-04 | Phase 1 | Pending |
-| EXCP-05 | Phase 1 | Pending |
+| EXCP-01 | Phase 1 | Complete |
+| EXCP-02 | Phase 1 | Complete |
+| EXCP-03 | Phase 1 | Complete |
+| EXCP-04 | Phase 1 | Complete |
+| EXCP-05 | Phase 1 | Complete |
 | LOG-01 | Phase 2 | Pending |
 | LOG-02 | Phase 2 | Pending |
 | LOG-03 | Phase 2 | Pending |
