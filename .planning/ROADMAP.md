@@ -13,7 +13,7 @@ This roadmap delivers a modular .NET 10 Web API starter repository where every f
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Solution Scaffold and Foundation** - Host + Shared projects, extension method composition pattern, IOptions conventions, grouped Program.cs, and global exception handling
-- [ ] **Phase 2: Observability** - Serilog structured logging module with two-stage bootstrap and configurable sinks
+- [x] **Phase 2: Observability** - Serilog structured logging module with two-stage bootstrap and configurable sinks (completed 2026-03-18)
 - [ ] **Phase 3: Data Layer** - EF Core module with SQLite default, multi-provider migration assemblies, and provider switching
 - [ ] **Phase 4: Security and API Surface** - Auth module (Identity + Google OAuth + JWT Bearer), API versioning, OpenAPI/Scalar docs, CORS, and FluentValidation
 - [ ] **Phase 5: Production Hardening** - Rate limiting, caching, response compression, standardized response envelope, and health check endpoints
@@ -125,7 +125,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
-| 2. Observability | 1/2 | In progress | - |
+| 2. Observability | 2/2 | Complete   | 2026-03-18 |
 | 3. Data Layer | 0/? | Not started | - |
 | 4. Security and API Surface | 0/? | Not started | - |
 | 5. Production Hardening | 0/? | Not started | - |

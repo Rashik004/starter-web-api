@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-18T12:15:21Z"
-last_activity: 2026-03-18 -- Plan 02-01 executed (Starter.Logging module)
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-18T12:49:02Z"
+last_activity: 2026-03-18 -- Plan 02-02 executed (Program.cs Serilog integration)
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 2: Observability in progress. Starter.Logging module created, needs Program.cs integration (Plan 02).
+**Current focus:** Phase 2: Observability complete. Serilog structured logging fully integrated. Ready to begin Phase 3: Data Layer.
 
 ## Current Position
 
 Phase: 2 of 6 (Observability)
-Plan: 1 of 2 in current phase
-Status: Plan 02-01 Complete, Plan 02-02 Pending
-Last activity: 2026-03-18 -- Plan 02-01 executed (Starter.Logging module)
+Plan: 2 of 2 in current phase
+Status: Plan 02-02 Complete, Phase 02 Complete
+Last activity: 2026-03-18 -- Plan 02-02 executed (Program.cs Serilog integration)
 
-Progress: [#######---] 75% (3/4 plans)
+Progress: [##########] 100% (4/4 plans)
 
 ## Performance Metrics
 
@@ -69,6 +69,9 @@ Recent decisions affecting current work:
 - 01-02: DiagnosticsController uses runtime IsDevelopment() guard, not build-time exclusion
 - 02-01: Omitted Starter.Shared ProjectReference from Starter.Logging (no shared types used)
 - 02-01: Used nullable bool with default true for request logging toggle config to avoid silent disable when section missing
+- 02-02: Bootstrap logger and try/catch/finally live in Program.cs, not Starter.Logging module (must exist before module loads and after shutdown)
+- 02-02: UseAppRequestLogging placed after UseAppExceptionHandling and UseHttpsRedirection per middleware ordering
+- 02-02: Old built-in Logging section removed from appsettings.json — Serilog replaces the built-in pipeline entirely
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T12:15:21Z
-Stopped at: Completed 02-01-PLAN.md
-Resume file: .planning/phases/02-observability/02-02-PLAN.md
+Last session: 2026-03-18T12:49:02Z
+Stopped at: Completed 02-02-PLAN.md
+Resume file: Phase 02 complete. Next: Phase 03 (Data Layer)
