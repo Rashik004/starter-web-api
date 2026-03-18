@@ -31,11 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Misconfigured appsettings.json sections cause immediate startup failure (ValidateOnStart), not silent null bindings
   4. Unhandled exceptions return RFC 7807 Problem Details with stack traces in Development and without in Production
   5. No module class library directly references another module -- only Shared is referenced, and all public surface is limited to extension methods and contracts
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md -- Scaffold solution structure (Host + Shared + ExceptionHandling projects), exception types, extension method composition pattern, IOptions with ValidateOnStart, grouped Program.cs
+- [ ] 01-02-PLAN.md -- Implement GlobalExceptionHandler with typed exception mapping and RFC 7807 ProblemDetails, create DiagnosticsController for verification
 
 ### Phase 2: Observability
 **Goal**: All application activity is captured through structured logging with configurable sinks, so that debugging is available before complex modules are built
@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solution Scaffold and Foundation | 0/? | Not started | - |
+| 1. Solution Scaffold and Foundation | 0/2 | Planned | - |
 | 2. Observability | 0/? | Not started | - |
 | 3. Data Layer | 0/? | Not started | - |
 | 4. Security and API Surface | 0/? | Not started | - |
