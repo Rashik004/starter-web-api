@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Starter.Validation\Starter.Validation.csproj" />
     <ProjectReference Include="..\Starter.Auth.Identity\Starter.Auth.Identity.csproj" />
     <ProjectReference Include="..\Starter.Auth.Jwt\Starter.Auth.Jwt.csproj" />
+    <ProjectReference Include="..\Starter.Auth.Google\Starter.Auth.Google.csproj" />
     <ProjectReference Include="..\Starter.OpenApi\Starter.OpenApi.csproj" />
   </ItemGroup>
 
