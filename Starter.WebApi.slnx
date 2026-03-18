@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="src/Starter.ExceptionHandling/Starter.ExceptionHandling.csproj" />
+    <Project Path="src/Starter.Logging/Starter.Logging.csproj" />
   </Folder>
 </Solution>

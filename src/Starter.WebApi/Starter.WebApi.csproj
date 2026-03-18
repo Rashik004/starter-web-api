@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Starter.Shared\Starter.Shared.csproj" />
     <ProjectReference Include="..\Starter.ExceptionHandling\Starter.ExceptionHandling.csproj" />
+    <ProjectReference Include="..\Starter.Logging\Starter.Logging.csproj" />
   </ItemGroup>
 
 </Project>
