@@ -1,6 +1,0 @@
-@TemplateWebApi_HostAddress = http://localhost:5041
-
-GET {{TemplateWebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

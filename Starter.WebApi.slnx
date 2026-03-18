@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Host/">
+    <Project Path="src/Starter.WebApi/Starter.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="src/Starter.Shared/Starter.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Modules/">
+    <Project Path="src/Starter.ExceptionHandling/Starter.ExceptionHandling.csproj" />
+  </Folder>
+</Solution>
