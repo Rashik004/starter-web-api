@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-18T13:57:10.482Z"
-last_activity: 2026-03-18 -- Plan 02-02 executed (Program.cs Serilog integration)
+status: in-progress
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-18T14:31:00.000Z"
+last_activity: 2026-03-18 -- Plan 03-01 executed (EF Core data module + migration assemblies)
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 100
+  total_plans: 7
+  completed_plans: 5
+  percent: 71
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 2: Observability complete. Serilog structured logging fully integrated. Ready to begin Phase 3: Data Layer.
+**Current focus:** Phase 3: Data Layer in progress. Starter.Data module, migration assemblies, and shared contracts created. Next: Plan 03-02 (service/API wiring).
 
 ## Current Position
 
-Phase: 2 of 6 (Observability)
-Plan: 2 of 2 in current phase
-Status: Plan 02-02 Complete, Phase 02 Complete
-Last activity: 2026-03-18 -- Plan 02-02 executed (Program.cs Serilog integration)
+Phase: 3 of 6 (Data Layer)
+Plan: 1 of 3 in current phase
+Status: Plan 03-01 Complete
+Last activity: 2026-03-18 -- Plan 03-01 executed (EF Core data module + migration assemblies)
 
-Progress: [##########] 100% (4/4 plans)
+Progress: [#######---] 71% (5/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 7min
-- Total execution time: 0.3 hours
+- Total plans completed: 4
+- Average duration: 6min
+- Total execution time: 0.4 hours
 
 **By Phase:**
 
@@ -45,10 +45,11 @@ Progress: [##########] 100% (4/4 plans)
 |-------|-------|-------|----------|
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
+| 03 | 1 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 8min, 6min
-- Trend: stable
+- Last 5 plans: 6min, 8min, 6min, 5min
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -72,6 +73,10 @@ Recent decisions affecting current work:
 - 02-02: Bootstrap logger and try/catch/finally live in Program.cs, not Starter.Logging module (must exist before module loads and after shutdown)
 - 02-02: UseAppRequestLogging placed after UseAppExceptionHandling and UseHttpsRedirection per middleware ordering
 - 02-02: Old built-in Logging section removed from appsettings.json — Serilog replaces the built-in pipeline entirely
+- 03-01: Used string constants for migration assembly names to avoid circular project references (Starter.Data cannot reference migration assemblies that reference Starter.Data)
+- 03-01: CommandTimeout configured per-provider via relational options builder (DbContextOptionsBuilder lacks SetCommandTimeout)
+- 03-01: Provided full EfRepository/TodoService implementations instead of NotImplementedException stubs
+- 03-01: AppDbContext is internal class (not sealed) to support Phase 4 Identity extensibility
 
 ### Pending Todos
 
@@ -80,10 +85,9 @@ None yet.
 ### Blockers/Concerns
 
 - Research flags Phase 4 (Auth) as highest complexity -- may warrant /gsd:research-phase before planning
-- Research flags Phase 3 (Data) per-provider migration assembly pattern as needing implementation research
 
 ## Session Continuity
 
-Last session: 2026-03-18T13:57:10.477Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-data-layer/03-CONTEXT.md
+Last session: 2026-03-18T14:31:00.000Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: .planning/phases/03-data-layer/03-01-SUMMARY.md

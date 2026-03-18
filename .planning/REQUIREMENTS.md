@@ -53,10 +53,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Database
 
-- [ ] **DATA-01**: EF Core 10 is configured with SQLite as the zero-config development default
-- [ ] **DATA-02**: SQL Server provider is available and swappable via configuration
-- [ ] **DATA-03**: PostgreSQL provider is available and swappable via configuration
-- [ ] **DATA-04**: Separate migration assemblies exist per database provider
+- [x] **DATA-01**: EF Core 10 is configured with SQLite as the zero-config development default
+- [x] **DATA-02**: SQL Server provider is available and swappable via configuration
+- [x] **DATA-03**: PostgreSQL provider is available and swappable via configuration
+- [x] **DATA-04**: Separate migration assemblies exist per database provider
 - [ ] **DATA-05**: Migration helper scripts are provided (dotnet ef migrations add / database update)
 - [ ] **DATA-06**: A repository pattern or thin service layer wraps DbContext
 
@@ -187,10 +187,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOG-04 | Phase 2 | Complete |
 | LOG-05 | Phase 2 | Complete |
 | LOG-06 | Phase 2 | Complete |
-| DATA-01 | Phase 3 | Pending |
-| DATA-02 | Phase 3 | Pending |
-| DATA-03 | Phase 3 | Pending |
-| DATA-04 | Phase 3 | Pending |
+| DATA-01 | Phase 3 | Complete |
+| DATA-02 | Phase 3 | Complete |
+| DATA-03 | Phase 3 | Complete |
+| DATA-04 | Phase 3 | Complete |
 | DATA-05 | Phase 3 | Pending |
 | DATA-06 | Phase 3 | Pending |
 | AUTH-01 | Phase 4 | Pending |

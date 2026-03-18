@@ -49,7 +49,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md -- Create Starter.Logging module with SinkRegistrar (Enabled flag pattern), RequestLoggingConfiguration (health check exclusion, dynamic log levels), CorrelationIdMiddleware, and AddAppLogging/UseAppRequestLogging extension methods
-- [ ] 02-02-PLAN.md -- Wire Program.cs with two-stage bootstrap (try/catch/finally), configure appsettings.json with full Serilog sink configuration, and human-verify structured logging output
+- [x] 02-02-PLAN.md -- Wire Program.cs with two-stage bootstrap (try/catch/finally), configure appsettings.json with full Serilog sink configuration, and human-verify structured logging output
 
 ### Phase 3: Data Layer
 **Goal**: The application has a working EF Core data layer with SQLite for zero-config development and a migration strategy that supports switching to SQL Server or PostgreSQL without regenerating migrations
@@ -63,7 +63,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Create Starter.Data module with EF Core 10 multi-provider support (SQLite/SqlServer/PostgreSQL), AppDbContext, DatabaseOptions, TodoItem entity, 3 migration assembly projects with markers, and IRepository<T>/ITodoService contracts in Shared
+- [x] 03-01-PLAN.md -- Create Starter.Data module with EF Core 10 multi-provider support (SQLite/SqlServer/PostgreSQL), AppDbContext, DatabaseOptions, TodoItem entity, 3 migration assembly projects with markers, and IRepository<T>/ITodoService contracts in Shared
 - [ ] 03-02-PLAN.md -- Implement EfRepository<T> and TodoService, create TodoController with CRUD endpoints and DTOs, wire AddAppData/UseAppData into Program.cs, configure appsettings.json Database section
 - [ ] 03-03-PLAN.md -- Create migration helper scripts (bash + PowerShell), upgrade dotnet-ef tool, generate initial SQLite migration with seed data, and human-verify end-to-end CRUD
 
@@ -127,7 +127,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
 | 2. Observability | 2/2 | Complete   | 2026-03-18 |
-| 3. Data Layer | 0/3 | Planned | - |
+| 3. Data Layer | 1/3 | In Progress | - |
 | 4. Security and API Surface | 0/? | Not started | - |
 | 5. Production Hardening | 0/? | Not started | - |
 | 6. Testing and Validation | 0/? | Not started | - |
