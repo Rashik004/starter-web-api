@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- Migration assemblies need access to internal AppDbContext for generated migration code -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Starter.Data.Migrations.Sqlite" />
+    <InternalsVisibleTo Include="Starter.Data.Migrations.SqlServer" />
+    <InternalsVisibleTo Include="Starter.Data.Migrations.PostgreSql" />
+  </ItemGroup>
+
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
