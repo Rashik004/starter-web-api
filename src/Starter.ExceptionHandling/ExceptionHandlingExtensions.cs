@@ -29,8 +29,8 @@ public static class ExceptionHandlingExtensions
             };
         });
 
-        // GlobalExceptionHandler will be registered in Plan 02 Task 1
-        // after the handler implementation is created
+        // Register the global exception handler
+        services.AddExceptionHandler<Handlers.GlobalExceptionHandler>();
 
         return services;
     }
