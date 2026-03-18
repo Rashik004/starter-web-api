@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Starter.Data.Migrations.PostgreSql\Starter.Data.Migrations.PostgreSql.csproj" />
     <ProjectReference Include="..\Starter.Versioning\Starter.Versioning.csproj" />
     <ProjectReference Include="..\Starter.Cors\Starter.Cors.csproj" />
+    <ProjectReference Include="..\Starter.Validation\Starter.Validation.csproj" />
   </ItemGroup>
 
 </Project>
