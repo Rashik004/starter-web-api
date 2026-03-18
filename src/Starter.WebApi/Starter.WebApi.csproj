@@ -25,6 +25,8 @@
     <ProjectReference Include="..\Starter.Versioning\Starter.Versioning.csproj" />
     <ProjectReference Include="..\Starter.Cors\Starter.Cors.csproj" />
     <ProjectReference Include="..\Starter.Validation\Starter.Validation.csproj" />
+    <ProjectReference Include="..\Starter.Auth.Identity\Starter.Auth.Identity.csproj" />
+    <ProjectReference Include="..\Starter.OpenApi\Starter.OpenApi.csproj" />
   </ItemGroup>
 
 </Project>

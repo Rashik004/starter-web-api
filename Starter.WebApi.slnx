@@ -12,7 +12,9 @@
     <Project Path="src/Starter.Data/Starter.Data.csproj" />
     <Project Path="src/Starter.Versioning/Starter.Versioning.csproj" />
     <Project Path="src/Starter.Cors/Starter.Cors.csproj" />
+    <Project Path="src/Starter.OpenApi/Starter.OpenApi.csproj" />
     <Project Path="src/Starter.Validation/Starter.Validation.csproj" />
+    <Project Path="src/Starter.Auth.Identity/Starter.Auth.Identity.csproj" />
   </Folder>
   <Folder Name="/Migrations/">
     <Project Path="src/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />

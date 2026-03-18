@@ -11,6 +11,7 @@
     <InternalsVisibleTo Include="Starter.Data.Migrations.Sqlite" />
     <InternalsVisibleTo Include="Starter.Data.Migrations.SqlServer" />
     <InternalsVisibleTo Include="Starter.Data.Migrations.PostgreSql" />
+    <InternalsVisibleTo Include="Starter.Auth.Identity" />
   </ItemGroup>
 
   <ItemGroup>
