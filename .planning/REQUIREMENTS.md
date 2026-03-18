@@ -1,7 +1,7 @@
 # Requirements: Starter.WebApi
 
 **Defined:** 2026-03-18
-**Core Value:** Every module is independently removable — deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
+**Core Value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
 
 ## v1 Requirements
 
@@ -13,8 +13,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **FOUND-02**: Solution contains a Host Web API project that references only the modules it needs
 - [ ] **FOUND-03**: Each module is a separate class library exposing `AddStarter{Module}` on IServiceCollection and optionally `UseStarter{Module}` on WebApplication
 - [ ] **FOUND-04**: Program.cs uses grouped-by-concern layout (Observability, Security, Data, API sections) with one extension method call per module
-- [ ] **FOUND-05**: Removing a module requires only deleting the extension method call(s) in Program.cs and the project reference — no other changes
-- [ ] **FOUND-06**: No module references another module directly — all cross-module communication flows through interfaces in Shared resolved via DI
+- [ ] **FOUND-05**: Removing a module requires only deleting the extension method call(s) in Program.cs and the project reference -- no other changes
+- [ ] **FOUND-06**: No module references another module directly -- all cross-module communication flows through interfaces in Shared resolved via DI
 - [ ] **FOUND-07**: All class library projects use `internal` visibility by default; only extension methods and contracts are public
 
 ### Configuration
@@ -38,7 +38,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **LOG-03**: File sink is configurable via appsettings.json
 - [ ] **LOG-04**: Azure Application Insights sink available via Serilog.Sinks.OpenTelemetry
 - [ ] **LOG-05**: Seq sink is configurable for local structured log viewing
-- [ ] **LOG-06**: Sink configuration is entirely driven by appsettings.json — no code changes to enable/disable sinks
+- [ ] **LOG-06**: Sink configuration is entirely driven by appsettings.json -- no code changes to enable/disable sinks
 
 ### Authentication & Authorization
 
@@ -151,11 +151,11 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Feature | Reason |
 |---------|--------|
-| MediatR / CQRS | Architectural opinion — users add if needed |
-| AutoMapper / Mapster | Magic mapping hides bugs — use manual mapping |
+| MediatR / CQRS | Architectural opinion -- users add if needed |
+| AutoMapper / Mapster | Magic mapping hides bugs -- use manual mapping |
 | Multi-tenancy | SaaS-specific complexity, not general API concern |
 | Background jobs (Hangfire) | Most APIs don't need scheduled jobs in starter |
-| GraphQL | Different API paradigm — this is REST |
+| GraphQL | Different API paradigm -- this is REST |
 | dotnet new template | Clone-and-modify is the intended workflow |
 | Feature flags | Provider-specific runtime concern |
 | Frontend / UI | API only |
@@ -166,13 +166,85 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *(populated during roadmap creation)* | | |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+| FOUND-05 | Phase 1 | Pending |
+| FOUND-06 | Phase 1 | Pending |
+| FOUND-07 | Phase 1 | Pending |
+| CONF-01 | Phase 1 | Pending |
+| CONF-02 | Phase 1 | Pending |
+| CONF-03 | Phase 1 | Pending |
+| EXCP-01 | Phase 1 | Pending |
+| EXCP-02 | Phase 1 | Pending |
+| EXCP-03 | Phase 1 | Pending |
+| EXCP-04 | Phase 1 | Pending |
+| EXCP-05 | Phase 1 | Pending |
+| LOG-01 | Phase 2 | Pending |
+| LOG-02 | Phase 2 | Pending |
+| LOG-03 | Phase 2 | Pending |
+| LOG-04 | Phase 2 | Pending |
+| LOG-05 | Phase 2 | Pending |
+| LOG-06 | Phase 2 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Pending |
+| DATA-04 | Phase 3 | Pending |
+| DATA-05 | Phase 3 | Pending |
+| DATA-06 | Phase 3 | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| AUTH-04 | Phase 4 | Pending |
+| AUTH-05 | Phase 4 | Pending |
+| AUTH-06 | Phase 4 | Pending |
+| AUTH-07 | Phase 4 | Pending |
+| AUTH-08 | Phase 4 | Pending |
+| CORS-01 | Phase 4 | Pending |
+| CORS-02 | Phase 4 | Pending |
+| CORS-03 | Phase 4 | Pending |
+| DOCS-01 | Phase 4 | Pending |
+| DOCS-02 | Phase 4 | Pending |
+| DOCS-03 | Phase 4 | Pending |
+| DOCS-04 | Phase 4 | Pending |
+| VERS-01 | Phase 4 | Pending |
+| VERS-02 | Phase 4 | Pending |
+| VERS-03 | Phase 4 | Pending |
+| VALD-01 | Phase 4 | Pending |
+| VALD-02 | Phase 4 | Pending |
+| VALD-03 | Phase 4 | Pending |
+| RATE-01 | Phase 5 | Pending |
+| RATE-02 | Phase 5 | Pending |
+| RATE-03 | Phase 5 | Pending |
+| RATE-04 | Phase 5 | Pending |
+| CACH-01 | Phase 5 | Pending |
+| CACH-02 | Phase 5 | Pending |
+| CACH-03 | Phase 5 | Pending |
+| COMP-01 | Phase 5 | Pending |
+| COMP-02 | Phase 5 | Pending |
+| COMP-03 | Phase 5 | Pending |
+| RESP-01 | Phase 5 | Pending |
+| RESP-02 | Phase 5 | Pending |
+| RESP-03 | Phase 5 | Pending |
+| HLTH-01 | Phase 5 | Pending |
+| HLTH-02 | Phase 5 | Pending |
+| HLTH-03 | Phase 5 | Pending |
+| HLTH-04 | Phase 5 | Pending |
+| HLTH-05 | Phase 5 | Pending |
+| TEST-01 | Phase 6 | Pending |
+| TEST-02 | Phase 6 | Pending |
+| TEST-03 | Phase 6 | Pending |
+| TEST-04 | Phase 6 | Pending |
+| TEST-05 | Phase 6 | Pending |
+| TEST-06 | Phase 6 | Pending |
+| TEST-07 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 53 total
-- Mapped to phases: 0
-- Unmapped: 53
+- v1 requirements: 73 total
+- Mapped to phases: 73
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-18*
-*Last updated: 2026-03-18 after initial definition*
+*Last updated: 2026-03-18 after roadmap creation*
