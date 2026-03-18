@@ -79,12 +79,15 @@ Plans:
   5. Scalar UI is available at a documentation endpoint with JWT authorize button, and XML doc comments are visible in the API documentation
   6. Invalid request payloads return RFC 7807 Problem Details responses consistent with the exception handling format
   7. CORS policies differ between Development (permissive) and Production (restrictive), configured entirely via appsettings.json
-**Plans**: TBD
+**Plans**: 6 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md -- Create Starter.Auth.Shared (AppUser, AuthConstants, JwtOptions, PolicyScheme), modify Data layer to IdentityDbContext<AppUser>, expand TodoItem with v2 fields, generate SQLite migration
+- [ ] 04-02-PLAN.md -- Create Starter.Versioning (URL segment versioning), Starter.Cors (config-driven CORS policies), and Starter.Validation (FluentValidation 12 manual injection)
+- [ ] 04-03-PLAN.md -- Create Starter.Auth.Identity (ASP.NET Identity with EF Core stores), Starter.Auth.Jwt (JWT Bearer + JwtTokenService), and Starter.Auth.Google (Google OAuth handler)
+- [ ] 04-04-PLAN.md -- Create Starter.OpenApi (OpenAPI 3.1 per-version documents, Scalar UI with config-driven visibility, Bearer security scheme transformer)
+- [ ] 04-05-PLAN.md -- Create AuthController (register/login/Google OAuth), version TodoController (v1), create TodoV2Controller (v2), add FluentValidation validators
+- [ ] 04-06-PLAN.md -- Wire all Phase 4 modules into Program.cs, configure appsettings.json, enable XML docs, and human-verify end-to-end auth flow
 
 ### Phase 5: Production Hardening
 **Goal**: The API has production-grade rate limiting, caching, response compression, a standardized response envelope, and comprehensive health check endpoints -- all independently removable
@@ -128,6 +131,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Solution Scaffold and Foundation | 2/2 | Complete | 2026-03-18 |
 | 2. Observability | 2/2 | Complete   | 2026-03-18 |
 | 3. Data Layer | 3/3 | Complete   | 2026-03-18 |
-| 4. Security and API Surface | 0/? | Not started | - |
+| 4. Security and API Surface | 0/6 | Not started | - |
 | 5. Production Hardening | 0/? | Not started | - |
 | 6. Testing and Validation | 0/? | Not started | - |
