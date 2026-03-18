@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-18T15:36:32.915Z"
-last_activity: 2026-03-18 -- Plan 03-03 executed (migration scripts, initial migration, E2E verification)
+status: in-progress
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-18T16:59:51.000Z"
+last_activity: 2026-03-18 -- Plan 04-02 executed (Versioning, CORS, Validation modules)
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
+  total_plans: 13
+  completed_plans: 9
+  percent: 69
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 3: Data Layer complete. Full EF Core stack verified end-to-end (API -> Service -> Repository -> DbContext -> SQLite). Next: Phase 4 (Security and API Surface).
+**Current focus:** Phase 4: Security and API Surface in progress. Auth shared module and API surface modules (Versioning, CORS, Validation) built. Next: Plan 04-03 (OpenAPI/Swagger).
 
 ## Current Position
 
-Phase: 3 of 6 (Data Layer) -- COMPLETE
-Plan: 3 of 3 in current phase (all complete)
-Status: Phase 3 Complete -- Ready for Phase 4
-Last activity: 2026-03-18 -- Plan 03-03 executed (migration scripts, initial migration, E2E verification)
+Phase: 4 of 6 (Security and API Surface)
+Plan: 2 of 6 in current phase (2 complete)
+Status: Phase 4 in progress -- Plan 04-02 complete
+Last activity: 2026-03-18 -- Plan 04-02 executed (Versioning, CORS, Validation modules)
 
-Progress: [##########] 100% (7/7 plans)
+Progress: [######----] 69% (9/13 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 9
 - Average duration: 5min
-- Total execution time: 0.6 hours
+- Total execution time: 0.7 hours
 
 **By Phase:**
 
@@ -46,10 +46,11 @@ Progress: [##########] 100% (7/7 plans)
 | 01 | 2 | 14min | 7min |
 | 02 | 1 | 6min | 6min |
 | 03 | 3 | 12min | 4min |
+| 04 | 2 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 6min, 5min, 3min, 4min
-- Trend: improving
+- Last 5 plans: 5min, 3min, 4min, 4min, 4min
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -82,6 +83,10 @@ Recent decisions affecting current work:
 - 03-02: EnableSensitiveDataLogging=true in Development appsettings only, false in base config
 - 03-03: Environment variable (Database__Provider) used in migration scripts instead of -- --provider CLI arg for reliable configuration override
 - 03-03: starter.db and all .db/.db-shm/.db-wal files gitignored to prevent runtime database commits
+- 04-02: Versioning uses UrlSegmentApiVersionReader for clean /api/v{version}/ URLs (not query string or header)
+- 04-02: CORS extension on WebApplicationBuilder (not IServiceCollection) to access Configuration for config binding
+- 04-02: FluentValidation scans entry assembly at runtime for validator auto-discovery (no static marker type)
+- 04-02: MVC auto-validation suppressed (SuppressModelStateInvalidFilter) so FluentValidation is single validation source
 
 ### Pending Todos
 
@@ -93,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T15:36:32.910Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-security-and-api-surface/04-CONTEXT.md
+Last session: 2026-03-18T16:59:51.000Z
+Stopped at: Completed 04-02-PLAN.md
+Resume file: .planning/phases/04-security-and-api-surface/04-02-SUMMARY.md

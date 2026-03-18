@@ -70,9 +70,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### CORS
 
-- [ ] **CORS-01**: CORS policies are configurable via appsettings.json
-- [ ] **CORS-02**: Development profile is permissive (allow all origins)
-- [ ] **CORS-03**: Production profile is restrictive (explicit allowed origins)
+- [x] **CORS-01**: CORS policies are configurable via appsettings.json
+- [x] **CORS-02**: Development profile is permissive (allow all origins)
+- [x] **CORS-03**: Production profile is restrictive (explicit allowed origins)
 
 ### API Documentation
 
@@ -83,13 +83,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### API Versioning
 
-- [ ] **VERS-01**: API versioning is configured using Asp.Versioning.Http/Mvc
-- [ ] **VERS-02**: URL segment versioning is the default strategy (/api/v1/)
+- [x] **VERS-01**: API versioning is configured using Asp.Versioning.Http/Mvc
+- [x] **VERS-02**: URL segment versioning is the default strategy (/api/v1/)
 - [ ] **VERS-03**: Sample v1 and v2 controllers demonstrate the versioning pattern and migration path
 
 ### Input Validation
 
-- [ ] **VALD-01**: FluentValidation 12 is integrated using manual IValidator<T> injection (not deprecated auto-pipeline)
+- [x] **VALD-01**: FluentValidation 12 is integrated using manual IValidator<T> injection (not deprecated auto-pipeline)
 - [ ] **VALD-02**: Validation failures return RFC 7807 Problem Details responses consistent with exception handling
 - [ ] **VALD-03**: Sample validators for request DTOs are included
 
@@ -201,17 +201,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-06 | Phase 4 | Pending |
 | AUTH-07 | Phase 4 | Pending |
 | AUTH-08 | Phase 4 | Pending |
-| CORS-01 | Phase 4 | Pending |
-| CORS-02 | Phase 4 | Pending |
-| CORS-03 | Phase 4 | Pending |
+| CORS-01 | Phase 4 | Complete |
+| CORS-02 | Phase 4 | Complete |
+| CORS-03 | Phase 4 | Complete |
 | DOCS-01 | Phase 4 | Pending |
 | DOCS-02 | Phase 4 | Pending |
 | DOCS-03 | Phase 4 | Pending |
 | DOCS-04 | Phase 4 | Pending |
-| VERS-01 | Phase 4 | Pending |
-| VERS-02 | Phase 4 | Pending |
+| VERS-01 | Phase 4 | Complete |
+| VERS-02 | Phase 4 | Complete |
 | VERS-03 | Phase 4 | Pending |
-| VALD-01 | Phase 4 | Pending |
+| VALD-01 | Phase 4 | Complete |
 | VALD-02 | Phase 4 | Pending |
 | VALD-03 | Phase 4 | Pending |
 | RATE-01 | Phase 5 | Pending |
