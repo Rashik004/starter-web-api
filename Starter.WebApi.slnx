@@ -21,6 +21,7 @@
     <Project Path="src/Starter.Compression/Starter.Compression.csproj" />
     <Project Path="src/Starter.Caching/Starter.Caching.csproj" />
     <Project Path="src/Starter.HealthChecks/Starter.HealthChecks.csproj" />
+    <Project Path="src/Starter.Responses/Starter.Responses.csproj" />
   </Folder>
   <Folder Name="/Migrations/">
     <Project Path="src/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />
