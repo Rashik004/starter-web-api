@@ -95,9 +95,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Standardized Responses
 
-- [ ] **RESP-01**: Consistent response format across all endpoints
-- [ ] **RESP-02**: Shared error shape for validation errors, not-found, unauthorized, and unhandled exceptions
-- [ ] **RESP-03**: Response envelope is opt-in via attribute or action filter (not global middleware) to preserve module removability
+- [x] **RESP-01**: Consistent response format across all endpoints
+- [x] **RESP-02**: Shared error shape for validation errors, not-found, unauthorized, and unhandled exceptions
+- [x] **RESP-03**: Response envelope is opt-in via attribute or action filter (not global middleware) to preserve module removability
 
 ### Rate Limiting
 
@@ -108,9 +108,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Caching
 
-- [ ] **CACH-01**: IMemoryCache is registered with configurable expiration defaults
-- [ ] **CACH-02**: A sample cache-aside pattern is demonstrated in a service layer
-- [ ] **CACH-03**: IDistributedCache is available with in-memory default, swappable to Redis
+- [x] **CACH-01**: IMemoryCache is registered with configurable expiration defaults
+- [x] **CACH-02**: A sample cache-aside pattern is demonstrated in a service layer
+- [x] **CACH-03**: IDistributedCache is available with in-memory default, swappable to Redis
 
 ### Response Compression
 
@@ -218,15 +218,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RATE-02 | Phase 5 | Complete |
 | RATE-03 | Phase 5 | Complete |
 | RATE-04 | Phase 5 | Complete |
-| CACH-01 | Phase 5 | Pending |
-| CACH-02 | Phase 5 | Pending |
-| CACH-03 | Phase 5 | Pending |
+| CACH-01 | Phase 5 | Complete |
+| CACH-02 | Phase 5 | Complete |
+| CACH-03 | Phase 5 | Complete |
 | COMP-01 | Phase 5 | Complete |
 | COMP-02 | Phase 5 | Complete |
 | COMP-03 | Phase 5 | Complete |
-| RESP-01 | Phase 5 | Pending |
-| RESP-02 | Phase 5 | Pending |
-| RESP-03 | Phase 5 | Pending |
+| RESP-01 | Phase 5 | Complete |
+| RESP-02 | Phase 5 | Complete |
+| RESP-03 | Phase 5 | Complete |
 | HLTH-01 | Phase 5 | Pending |
 | HLTH-02 | Phase 5 | Pending |
 | HLTH-03 | Phase 5 | Pending |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-19T04:45:12.702Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-19T04:46:26.080Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 17
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-18)
 ## Current Position
 
 Phase: 05 (production-hardening) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Plan: 2 of 4
 
 *Updated after each plan completion*
 | Phase 05 P01 | 3min | 2 tasks | 7 files |
+| Phase 05 P02 | 4min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,8 @@ Recent decisions affecting current work:
 - 04-06: No Google credentials in appsettings.Development.json -- empty strings trigger safe no-op in AddAppGoogle()
 - [Phase 05]: Added Microsoft.AspNetCore.RateLimiting using for named policy extension methods (not in System.Threading.RateLimiting)
 - [Phase 05]: IConfiguration passed to both AddApp* methods for early options reading before DI container built
+- [Phase 05]: ApiResponse<T> placed in Starter.Shared so controllers don't depend on Starter.Responses
+- [Phase 05]: ApiResponseFilter is internal sealed, registered via DI for ServiceFilter opt-in (not global)
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T04:45:12.694Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-19T04:46:26.073Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
