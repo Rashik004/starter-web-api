@@ -28,4 +28,9 @@
     <Project Path="src/Starter.Data.Migrations.SqlServer/Starter.Data.Migrations.SqlServer.csproj" />
     <Project Path="src/Starter.Data.Migrations.PostgreSql/Starter.Data.Migrations.PostgreSql.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/Starter.WebApi.Tests.Integration/Starter.WebApi.Tests.Integration.csproj" />
+    <Project Path="tests/Starter.WebApi.Tests.Unit/Starter.WebApi.Tests.Unit.csproj" />
+    <Project Path="tests/Starter.WebApi.Tests.Architecture/Starter.WebApi.Tests.Architecture.csproj" />
+  </Folder>
 </Solution>
