@@ -101,10 +101,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Rate Limiting
 
-- [ ] **RATE-01**: Built-in System.Threading.RateLimiting / Microsoft.AspNetCore.RateLimiting middleware is used
-- [ ] **RATE-02**: Fixed window, sliding window, and token bucket policies are provided as defaults
-- [ ] **RATE-03**: Policy configuration is driven by appsettings.json
-- [ ] **RATE-04**: Both global and per-endpoint rate limiting policies are demonstrated
+- [x] **RATE-01**: Built-in System.Threading.RateLimiting / Microsoft.AspNetCore.RateLimiting middleware is used
+- [x] **RATE-02**: Fixed window, sliding window, and token bucket policies are provided as defaults
+- [x] **RATE-03**: Policy configuration is driven by appsettings.json
+- [x] **RATE-04**: Both global and per-endpoint rate limiting policies are demonstrated
 
 ### Caching
 
@@ -114,9 +114,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Response Compression
 
-- [ ] **COMP-01**: Gzip and Brotli response compression middleware is available
-- [ ] **COMP-02**: Module is opt-in, disabled by default
-- [ ] **COMP-03**: HTTPS compression security considerations (CRIME/BREACH) are documented
+- [x] **COMP-01**: Gzip and Brotli response compression middleware is available
+- [x] **COMP-02**: Module is opt-in, disabled by default
+- [x] **COMP-03**: HTTPS compression security considerations (CRIME/BREACH) are documented
 
 ### Testing
 
@@ -214,16 +214,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VALD-01 | Phase 4 | Complete |
 | VALD-02 | Phase 4 | Complete |
 | VALD-03 | Phase 4 | Complete |
-| RATE-01 | Phase 5 | Pending |
-| RATE-02 | Phase 5 | Pending |
-| RATE-03 | Phase 5 | Pending |
-| RATE-04 | Phase 5 | Pending |
+| RATE-01 | Phase 5 | Complete |
+| RATE-02 | Phase 5 | Complete |
+| RATE-03 | Phase 5 | Complete |
+| RATE-04 | Phase 5 | Complete |
 | CACH-01 | Phase 5 | Pending |
 | CACH-02 | Phase 5 | Pending |
 | CACH-03 | Phase 5 | Pending |
-| COMP-01 | Phase 5 | Pending |
-| COMP-02 | Phase 5 | Pending |
-| COMP-03 | Phase 5 | Pending |
+| COMP-01 | Phase 5 | Complete |
+| COMP-02 | Phase 5 | Complete |
+| COMP-03 | Phase 5 | Complete |
 | RESP-01 | Phase 5 | Pending |
 | RESP-02 | Phase 5 | Pending |
 | RESP-03 | Phase 5 | Pending |

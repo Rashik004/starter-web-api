@@ -2,16 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 04-06-PLAN.md -- Phase 4 complete
-last_updated: "2026-03-18T18:00:45.418Z"
-last_activity: 2026-03-18 -- Plan 04-06 executed (Program.cs wiring, appsettings, end-to-end verification). Phase 4 complete.
+status: unknown
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-19T04:45:12.702Z"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 13
-  completed_plans: 13
-  percent: 100
+  total_plans: 17
+  completed_plans: 14
 ---
 
 # Project State
@@ -21,20 +19,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 4 complete. All 13 plans through Phase 4 executed. Next: Phase 5 (Production Hardening) requires planning.
+**Current focus:** Phase 05 — production-hardening
 
 ## Current Position
 
-Phase: 4 of 6 (Security and API Surface) -- COMPLETE
-Plan: 6 of 6 in current phase (6 complete)
-Status: Phase 4 complete -- all plans executed
-Last activity: 2026-03-18 -- Plan 04-06 executed (Program.cs wiring, appsettings, end-to-end verification). Phase 4 complete.
-
-Progress: [██████████] 100% (13/13 plans)
+Phase: 05 (production-hardening) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 13
 - Average duration: 5min
 - Total execution time: 1.0 hours
@@ -49,10 +44,12 @@ Progress: [██████████] 100% (13/13 plans)
 | 04 | 6 | 35min | 6min |
 
 **Recent Trend:**
+
 - Last 5 plans: 6min, 3min, 7min, 3min, 8min
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase 05 P01 | 3min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -99,6 +96,8 @@ Recent decisions affecting current work:
 - 04-06: Used AddIdentityCore instead of AddIdentity to prevent Identity from overriding PolicyScheme ForwardDefaultSelector with cookie defaults
 - 04-06: Development JWT SecretKey is a non-production placeholder so app starts without User Secrets setup
 - 04-06: No Google credentials in appsettings.Development.json -- empty strings trigger safe no-op in AddAppGoogle()
+- [Phase 05]: Added Microsoft.AspNetCore.RateLimiting using for named policy extension methods (not in System.Threading.RateLimiting)
+- [Phase 05]: IConfiguration passed to both AddApp* methods for early options reading before DI container built
 
 ### Pending Todos
 
@@ -110,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T17:55:00Z
-Stopped at: Completed 04-06-PLAN.md -- Phase 4 complete
-Resume file: .planning/phases/04-security-and-api-surface/04-06-SUMMARY.md
+Last session: 2026-03-19T04:45:12.694Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
