@@ -18,6 +18,7 @@
     <Project Path="src/Starter.Auth.Jwt/Starter.Auth.Jwt.csproj" />
     <Project Path="src/Starter.Auth.Google/Starter.Auth.Google.csproj" />
     <Project Path="src/Starter.RateLimiting/Starter.RateLimiting.csproj" />
+    <Project Path="src/Starter.Compression/Starter.Compression.csproj" />
     <Project Path="src/Starter.Caching/Starter.Caching.csproj" />
     <Project Path="src/Starter.HealthChecks/Starter.HealthChecks.csproj" />
   </Folder>
