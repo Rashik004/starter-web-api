@@ -120,11 +120,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Testing
 
-- [ ] **TEST-01**: Integration test project uses WebApplicationFactory<Program>
+- [x] **TEST-01**: Integration test project uses WebApplicationFactory<Program>
 - [ ] **TEST-02**: Sample tests cover health check endpoints
 - [ ] **TEST-03**: Sample tests cover auth flows
 - [ ] **TEST-04**: Sample tests cover a CRUD operation
-- [ ] **TEST-05**: Unit test project includes sample service-layer tests
+- [x] **TEST-05**: Unit test project includes sample service-layer tests
 - [ ] **TEST-06**: Architectural tests (NetArchTest) enforce no module-to-module references
 - [ ] **TEST-07**: Module removal smoke tests prove removing any module doesn't break the build
 
@@ -232,11 +232,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HLTH-03 | Phase 5 | Complete |
 | HLTH-04 | Phase 5 | Complete |
 | HLTH-05 | Phase 5 | Complete |
-| TEST-01 | Phase 6 | Pending |
+| TEST-01 | Phase 6 | Complete |
 | TEST-02 | Phase 6 | Pending |
 | TEST-03 | Phase 6 | Pending |
 | TEST-04 | Phase 6 | Pending |
-| TEST-05 | Phase 6 | Pending |
+| TEST-05 | Phase 6 | Complete |
 | TEST-06 | Phase 6 | Pending |
 | TEST-07 | Phase 6 | Pending |
 
