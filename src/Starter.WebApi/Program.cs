@@ -3,11 +3,16 @@ using Starter.Auth.Google;
 using Starter.Auth.Identity;
 using Starter.Auth.Jwt;
 using Starter.Auth.Shared;
+using Starter.Caching;
+using Starter.Compression;
 using Starter.Cors;
 using Starter.Data;
 using Starter.ExceptionHandling;
+using Starter.HealthChecks;
 using Starter.Logging;
 using Starter.OpenApi;
+using Starter.RateLimiting;
+using Starter.Responses;
 using Starter.Validation;
 using Starter.Versioning;
 
@@ -45,21 +50,33 @@ try
     builder.Services.AddControllers();
     builder.Services.AddAppExceptionHandling();
 
+    // --- Production Hardening ---
+    builder.Services.AddAppResponses();                                    // Response envelope filter (opt-in per controller)
+    builder.Services.AddAppRateLimiting(builder.Configuration);            // Rate limiting policies from config
+    builder.Services.AddAppCaching(builder.Configuration);                 // IMemoryCache + IDistributedCache
+    // builder.Services.AddAppCompression(builder.Configuration);          // Response compression (opt-in, uncomment to enable)
+
+    // --- Health ---
+    builder.AddAppHealthChecks();                                          // Health check registrations (DB + external)
+
     var app = builder.Build();
 
     // --- Middleware Pipeline ---
     app.UseAppExceptionHandling(); // Must be first
+    // app.UseAppCompression();    // Uncomment to enable. Must be before response-writing middleware.
     app.UseHttpsRedirection();
     app.UseAppRequestLogging();    // After exception handler and HTTPS redirect
     app.UseAppData();              // Auto-migrate if configured
+    app.UseAppRateLimiting();      // After routing (implicit), before auth
 
-    app.UseCors();                 // After routing (implicit), before auth
+    app.UseCors();                 // CORS before auth
     app.UseAuthentication();
     app.UseAuthorization();
 
     app.UseAppOpenApi();           // MapOpenApi + MapScalarApiReference
 
     app.MapControllers();
+    app.UseAppHealthChecks();      // Maps /health, /health/ready, /health/live
 
     app.Run();
 }

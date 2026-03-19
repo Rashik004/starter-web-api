@@ -32,6 +32,11 @@
     <ProjectReference Include="..\Starter.Auth.Jwt\Starter.Auth.Jwt.csproj" />
     <ProjectReference Include="..\Starter.Auth.Google\Starter.Auth.Google.csproj" />
     <ProjectReference Include="..\Starter.OpenApi\Starter.OpenApi.csproj" />
+    <ProjectReference Include="..\Starter.RateLimiting\Starter.RateLimiting.csproj" />
+    <ProjectReference Include="..\Starter.Caching\Starter.Caching.csproj" />
+    <ProjectReference Include="..\Starter.Compression\Starter.Compression.csproj" />
+    <ProjectReference Include="..\Starter.Responses\Starter.Responses.csproj" />
+    <ProjectReference Include="..\Starter.HealthChecks\Starter.HealthChecks.csproj" />
   </ItemGroup>
 
 </Project>
