@@ -62,11 +62,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Health Checks
 
-- [ ] **HLTH-01**: /health endpoint returns aggregate health status
-- [ ] **HLTH-02**: /health/ready endpoint returns readiness status
-- [ ] **HLTH-03**: /health/live endpoint returns liveness status
-- [ ] **HLTH-04**: Database connectivity health check is included
-- [ ] **HLTH-05**: A sample custom health check for external dependencies is included
+- [x] **HLTH-01**: /health endpoint returns aggregate health status
+- [x] **HLTH-02**: /health/ready endpoint returns readiness status
+- [x] **HLTH-03**: /health/live endpoint returns liveness status
+- [x] **HLTH-04**: Database connectivity health check is included
+- [x] **HLTH-05**: A sample custom health check for external dependencies is included
 
 ### CORS
 
@@ -227,11 +227,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RESP-01 | Phase 5 | Complete |
 | RESP-02 | Phase 5 | Complete |
 | RESP-03 | Phase 5 | Complete |
-| HLTH-01 | Phase 5 | Pending |
-| HLTH-02 | Phase 5 | Pending |
-| HLTH-03 | Phase 5 | Pending |
-| HLTH-04 | Phase 5 | Pending |
-| HLTH-05 | Phase 5 | Pending |
+| HLTH-01 | Phase 5 | Complete |
+| HLTH-02 | Phase 5 | Complete |
+| HLTH-03 | Phase 5 | Complete |
+| HLTH-04 | Phase 5 | Complete |
+| HLTH-05 | Phase 5 | Complete |
 | TEST-01 | Phase 6 | Pending |
 | TEST-02 | Phase 6 | Pending |
 | TEST-03 | Phase 6 | Pending |
