@@ -15,6 +15,7 @@
     <InternalsVisibleTo Include="Starter.HealthChecks" />
     <InternalsVisibleTo Include="Starter.WebApi.Tests.Integration" />
     <InternalsVisibleTo Include="Starter.WebApi.Tests.Unit" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>
