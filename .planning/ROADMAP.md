@@ -113,14 +113,15 @@ Plans:
 **Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05, TEST-06, TEST-07
 **Success Criteria** (what must be TRUE):
   1. Integration tests using WebApplicationFactory exercise health check endpoints, auth flows, and a CRUD operation against the running application
-  2. Unit tests validate sample service-layer logic in isolation using NSubstitute for dependencies
+  2. Unit tests validate sample service-layer logic in isolation using Moq for dependencies
   3. Architectural tests (NetArchTest) fail the build if any module class library directly references another module
   4. Module removal smoke tests prove that removing any single module (deleting extension method call + project reference) results in a successful build
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md -- Create three test projects (Integration, Unit, Architecture), wire into solution under /Tests folder, build shared test infrastructure (CustomWebApplicationFactory, FakeAuthHandler, appsettings.Testing.json), implement TodoService unit tests with Moq
+- [ ] 06-02-PLAN.md -- Implement integration tests: health check endpoints, auth flow round-trip (register/login/JWT access), and Todo CRUD operations
+- [ ] 06-03-PLAN.md -- Implement architecture tests: NetArchTest module isolation enforcement and module removal smoke tests (script-based, testing all 19 removable modules)
 
 ## Progress
 
@@ -134,4 +135,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Data Layer | 3/3 | Complete   | 2026-03-18 |
 | 4. Security and API Surface | 6/6 | Complete | 2026-03-18 |
 | 5. Production Hardening | 0/4 | Not started | - |
-| 6. Testing and Validation | 0/? | Not started | - |
+| 6. Testing and Validation | 0/3 | Not started | - |
