@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-status: unknown
-stopped_at: Completed 06-03-PLAN.md
-last_updated: "2026-03-19T06:39:37.820Z"
+milestone_name: MVP
+status: complete
+stopped_at: Milestone v1.0 shipped
+last_updated: "2026-03-19T06:48:42.439Z"
 progress:
   total_phases: 6
   completed_phases: 6
@@ -16,23 +16,23 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-18)
+See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Every module is independently removable -- deleting one extension method call and its project reference cleanly removes that feature with no cascading breakage.
-**Current focus:** Phase 06 — testing-and-validation
+**Current focus:** v1.0 shipped — planning next milestone
 
 ## Current Position
 
-Phase: 06 (testing-and-validation) — COMPLETE
-Plan: 3 of 3 (all complete)
+Milestone: v1.0 MVP — SHIPPED 2026-03-19
+All 6 phases, 20 plans complete. 73/73 requirements validated.
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13
-- Average duration: 5min
-- Total execution time: 1.0 hours
+- Total plans completed: 20
+- Average duration: ~5min
+- Total execution time: ~1.5 hours
 
 **By Phase:**
 
@@ -42,92 +42,25 @@ Plan: 3 of 3 (all complete)
 | 02 | 1 | 6min | 6min |
 | 03 | 3 | 12min | 4min |
 | 04 | 6 | 35min | 6min |
-
-**Recent Trend:**
-
-- Last 5 plans: 6min, 3min, 7min, 3min, 8min
-- Trend: stable
-
-*Updated after each plan completion*
-| Phase 05 P01 | 3min | 2 tasks | 7 files |
-| Phase 05 P02 | 4min | 2 tasks | 8 files |
-| Phase 05 P03 | 5min | 2 tasks | 6 files |
-| Phase 05-04 P04 | 3min | 2 tasks | 7 files |
-| Phase 06 P01 | 9min | 2 tasks | 11 files |
-| Phase 06 P02 | 17min | 2 tasks | 7 files |
-| Phase 06 P03 | 24min | 2 tasks | 5 files |
+| 05 | 4 | 15min | 4min |
+| 06 | 3 | 50min | 17min |
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- Roadmap: 6 phases derived from 73 requirements following dependency order (scaffold -> observability -> data -> security/API -> hardening -> testing)
-- Roadmap: Health checks placed in Phase 5 (not Phase 1) because HLTH-04 database connectivity check depends on Phase 3 Data Layer
-- 01-01: SLNX format requires --format slnx flag in .NET 10.0.101 SDK (not default despite docs)
-- 01-01: OpenAPI package removed from Host; will be added in Phase 4
-- 01-01: GlobalExceptionHandler registration deferred to Plan 02 (handler not yet created)
-- 01-01: Configuration guidance added as JSON comments in appsettings.json
-- 01-02: GlobalExceptionHandler logs before returning true (handles .NET 10 SuppressDiagnosticsCallback)
-- 01-02: DiagnosticsController uses runtime IsDevelopment() guard, not build-time exclusion
-- 02-01: Omitted Starter.Shared ProjectReference from Starter.Logging (no shared types used)
-- 02-01: Used nullable bool with default true for request logging toggle config to avoid silent disable when section missing
-- 02-02: Bootstrap logger and try/catch/finally live in Program.cs, not Starter.Logging module (must exist before module loads and after shutdown)
-- 02-02: UseAppRequestLogging placed after UseAppExceptionHandling and UseHttpsRedirection per middleware ordering
-- 02-02: Old built-in Logging section removed from appsettings.json — Serilog replaces the built-in pipeline entirely
-- 03-01: Used string constants for migration assembly names to avoid circular project references (Starter.Data cannot reference migration assemblies that reference Starter.Data)
-- 03-01: CommandTimeout configured per-provider via relational options builder (DbContextOptionsBuilder lacks SetCommandTimeout)
-- 03-01: Provided full EfRepository/TodoService implementations instead of NotImplementedException stubs
-- 03-01: AppDbContext is internal class (not sealed) to support Phase 4 Identity extensibility
-- 03-02: TodoService.UpdateAsync throws NotFoundException (not null return) for GlobalExceptionHandler integration
-- 03-02: Database config section placed between ExceptionHandling and Serilog in appsettings.json
-- 03-02: EnableSensitiveDataLogging=true in Development appsettings only, false in base config
-- 03-03: Environment variable (Database__Provider) used in migration scripts instead of -- --provider CLI arg for reliable configuration override
-- 03-03: starter.db and all .db/.db-shm/.db-wal files gitignored to prevent runtime database commits
-- 04-02: Versioning uses UrlSegmentApiVersionReader for clean /api/v{version}/ URLs (not query string or header)
-- 04-02: CORS extension on WebApplicationBuilder (not IServiceCollection) to access Configuration for config binding
-- 04-02: FluentValidation scans entry assembly at runtime for validator auto-discovery (no static marker type)
-- 04-02: MVC auto-validation suppressed (SuppressModelStateInvalidFilter) so FluentValidation is single validation source
-- 04-01: Used AuthConstants.JwtScheme instead of JwtBearerDefaults.AuthenticationScheme to avoid JwtBearer package dependency in Auth.Shared
-- 04-01: TodoPriority enum defined as internal in same file as TodoItem entity for cohesion
-- 04-03: No additional NuGet for Auth.Identity -- Identity.EntityFrameworkCore comes transitively from Auth.Shared
-- 04-03: JwtTokenService registered as scoped (not singleton) to safely resolve IOptions per request
-- 04-03: GoogleAuthOptions has no [Required] attributes and no ValidateOnStart -- empty credentials trigger safe no-op
-- 04-04: Adapted BearerSecuritySchemeTransformer for Microsoft.OpenApi v2.0.0 breaking changes (namespace, property, and type changes)
-- 04-04: Used OpenApiSecuritySchemeReference instead of OpenApiSecurityScheme+OpenApiReference for security requirements (v2.0.0 API)
-- 04-05: AuthController uses [ApiVersionNeutral] -- auth is infrastructure, not a versioned business API
-- 04-05: FluentValidation.DependencyInjectionExtensions added directly to Host csproj for explicitness despite transitive availability
-- 04-06: Used AddIdentityCore instead of AddIdentity to prevent Identity from overriding PolicyScheme ForwardDefaultSelector with cookie defaults
-- 04-06: Development JWT SecretKey is a non-production placeholder so app starts without User Secrets setup
-- 04-06: No Google credentials in appsettings.Development.json -- empty strings trigger safe no-op in AddAppGoogle()
-- [Phase 05]: Added Microsoft.AspNetCore.RateLimiting using for named policy extension methods (not in System.Threading.RateLimiting)
-- [Phase 05]: IConfiguration passed to both AddApp* methods for early options reading before DI container built
-- [Phase 05]: ApiResponse<T> placed in Starter.Shared so controllers don't depend on Starter.Responses
-- [Phase 05]: ApiResponseFilter is internal sealed, registered via DI for ServiceFilter opt-in (not global)
-- [Phase 05]: HealthChecks module files pre-committed by parallel 05-02 executor; verified match and added InternalsVisibleTo as only remaining change
-- [Phase 05-04]: WrapResponseAttribute as public ServiceFilterAttribute wrapper for internal ApiResponseFilter (same-assembly typeof access)
-- [Phase 05-04]: Compression commented out in Program.cs (opt-in per COMP-02 requirement)
-- [Phase 05-04]: CacheDemoController uses ApiVersionNeutral (infrastructure demo, not versioned business API)
-- [Phase 06]: Used Content Update (not Include) for appsettings.Testing.json since Microsoft.NET.Sdk.Web auto-includes content files
-- [Phase 06]: Added DynamicProxyGenAssembly2 InternalsVisibleTo to Starter.Data.csproj so Moq can proxy IRepository<TodoItem> with internal generic argument
-- [Phase 06]: Disabled xUnit parallel test collection execution to prevent Serilog static Log.Logger race conditions between factory instances
-- [Phase 06]: Used direct DbContext construction for DB seeding instead of BuildServiceProvider to avoid Serilog Freeze() in test host
-- [Phase 06]: Re-registered FluentValidation validators from Host assembly in WebApplicationFactory (GetEntryAssembly returns test runner)
-- [Phase 06]: Auth.Identity->Data and HealthChecks->Data treated as known allowed cross-module dependencies in NetArchTest (intentional architectural choices for EF stores and DB health checks)
-- [Phase 06]: Module removal smoke tests use dotnet build with restore (not --no-restore) because removing project references invalidates NuGet assets file
+All v1.0 decisions logged in PROJECT.md Key Decisions table with outcomes marked.
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-- Research flags Phase 4 (Auth) as highest complexity -- may warrant /gsd:research-phase before planning
+None — milestone complete.
 
 ## Session Continuity
 
-Last session: 2026-03-19T06:33:30.082Z
-Stopped at: Completed 06-03-PLAN.md
+Last session: 2026-03-19
+Stopped at: Milestone v1.0 shipped
 Resume file: None

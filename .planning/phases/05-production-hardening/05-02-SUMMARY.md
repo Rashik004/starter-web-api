@@ -75,7 +75,7 @@ Each task was committed atomically:
 1. **Task 1: Create ApiResponse envelope in Shared and Starter.Caching module** - `30c9a24` (feat)
 2. **Task 2: Create Starter.Responses module with opt-in ApiResponseFilter** - `307f79e` (feat)
 
-**Plan metadata:** _pending_ (docs: complete plan)
+**Plan metadata:** `d52593d` (docs: complete plan)
 
 ## Files Created/Modified
 - `src/Starter.Shared/Responses/ApiResponse.cs` - Standardized response envelope with Success/Data/Error/Errors/Timestamp

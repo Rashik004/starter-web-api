@@ -68,14 +68,18 @@ Every module is independently removable — deleting one extension method call a
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Class libraries per module | Stronger boundaries than folders, lighter than NuGet packages | — Pending |
-| .NET 10 | Latest framework for a fresh starter | — Pending |
-| Starter repo over dotnet new template | Less ceremony, faster to iterate for personal use | — Pending |
-| SQLite as dev default | Zero-config friction for local development | — Pending |
-| Serilog as logging pipeline | Industry standard, sink ecosystem, structured by default | — Pending |
-| Identity + Google + JWT all enabled by default | Demonstrates full auth composition; remove what you don't need | — Pending |
-| Grouped-by-concern Program.cs | Scannable at a glance, clear section ownership | — Pending |
-| FluentValidation over DataAnnotations | More expressive, testable, separates validation from models | — Pending |
+| Class libraries per module | Stronger boundaries than folders, lighter than NuGet packages | ✓ Good — NetArchTest + 19-module smoke tests prove isolation |
+| .NET 10 | Latest framework for a fresh starter | ✓ Good — all packages available, no compatibility issues |
+| Starter repo over dotnet new template | Less ceremony, faster to iterate for personal use | ✓ Good — clone-and-modify workflow confirmed |
+| SQLite as dev default | Zero-config friction for local development | ✓ Good — auto-migrate on startup, no setup |
+| Serilog as logging pipeline | Industry standard, sink ecosystem, structured by default | ✓ Good — two-stage bootstrap catches startup crashes |
+| Identity + Google + JWT all enabled by default | Demonstrates full auth composition; remove what you don't need | ✓ Good — smoke tests prove each is independently removable |
+| Grouped-by-concern Program.cs | Scannable at a glance, clear section ownership | ✓ Good — 5 sections (Observability, Security, Data, API, Middleware) |
+| FluentValidation over DataAnnotations | More expressive, testable, separates validation from models | ✓ Good — manual injection avoids deprecated auto-pipeline |
+| AddIdentityCore over AddIdentity | Prevents Identity from overriding PolicyScheme cookie defaults | ✓ Good — discovered during Phase 4 integration |
+| Internal by default, public extension methods only | Module boundary enforcement via visibility | ✓ Good — InternalsVisibleTo used only for test + cross-module EF access |
+| Separate migration assemblies per provider | SQLite/SqlServer/PostgreSQL migrations don't conflict | ✓ Good — string constants avoid circular references |
+| ApiResponseFilter as opt-in ServiceFilter | Preserves module removability; not global middleware | ✓ Good — WrapResponseAttribute provides clean public API |
 
 ---
-*Last updated: 2026-03-19 after Phase 6 (Testing and Validation) completion — all requirements validated, v1.0 milestone complete*
+*Last updated: 2026-03-19 after v1.0 milestone completion — all 73 requirements validated, shipped*
