@@ -12,26 +12,25 @@ Every module is independently removable — deleting one extension method call a
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Extension method composition pattern with grouped-by-concern Program.cs — Validated in Phase 1: Solution Scaffold
+- [x] Structured logging via Serilog with configurable sinks (Console, File, App Insights, Seq) — Validated in Phase 2: Observability
+- [x] Global exception handling middleware returning RFC 7807 Problem Details — Validated in Phase 2: Observability
+- [x] EF Core database with SQLite default, swappable to SQL Server/PostgreSQL — Validated in Phase 3: Data Layer
+- [x] Model-first migrations with helper scripts — Validated in Phase 3: Data Layer
+- [x] CORS configuration via appsettings with dev/prod profiles — Validated in Phase 4: Security & API Surface
+- [x] ASP.NET Identity + Google OAuth + JWT Bearer auth (all enabled by default, each independently removable) — Validated in Phase 4: Security & API Surface
+- [x] Swagger/OpenAPI with JWT auth support and XML comments — Validated in Phase 4: Security & API Surface
+- [x] API versioning with sample v1/v2 controllers — Validated in Phase 4: Security & API Surface
+- [x] FluentValidation with Problem Details integration — Validated in Phase 4: Security & API Surface
+- [x] Rate limiting using built-in ASP.NET middleware with appsettings-driven policies — Validated in Phase 5: Production Hardening
+- [x] In-memory caching with IMemoryCache and optional IDistributedCache — Validated in Phase 5: Production Hardening
+- [x] Health check endpoints (/health, /health/ready, /health/live) — Validated in Phase 5: Production Hardening
+- [x] Standardized API response envelope across all endpoints — Validated in Phase 5: Production Hardening
+- [x] Gzip/Brotli response compression (opt-in) — Validated in Phase 5: Production Hardening
+- [x] IOptions<T> pattern per module with strongly-typed config sections — Validated in Phase 5: Production Hardening
 
 ### Active
 
-- [ ] Extension method composition pattern with grouped-by-concern Program.cs
-- [ ] ASP.NET Identity + Google OAuth + JWT Bearer auth (all enabled by default, each independently removable)
-- [ ] Structured logging via Serilog with configurable sinks (Console, File, App Insights, Seq)
-- [ ] Rate limiting using built-in ASP.NET middleware with appsettings-driven policies
-- [ ] In-memory caching with IMemoryCache and optional IDistributedCache
-- [ ] Global exception handling middleware returning RFC 7807 Problem Details
-- [ ] EF Core database with SQLite default, swappable to SQL Server/PostgreSQL
-- [ ] Model-first migrations with helper scripts
-- [ ] Health check endpoints (/health, /health/ready, /health/live)
-- [ ] CORS configuration via appsettings with dev/prod profiles
-- [ ] Swagger/OpenAPI with JWT auth support and XML comments
-- [ ] API versioning with sample v1/v2 controllers
-- [ ] FluentValidation with Problem Details integration
-- [ ] Standardized API response envelope across all endpoints
-- [ ] Gzip/Brotli response compression (opt-in)
-- [ ] IOptions<T> pattern per module with strongly-typed config sections
 - [ ] Integration test project with WebApplicationFactory
 - [ ] Unit test project with sample service-layer tests
 
@@ -76,4 +75,4 @@ Every module is independently removable — deleting one extension method call a
 | FluentValidation over DataAnnotations | More expressive, testable, separates validation from models | — Pending |
 
 ---
-*Last updated: 2026-03-18 after initialization*
+*Last updated: 2026-03-19 after Phase 5 (Production Hardening) completion — 16/18 requirements validated, testing phase remaining*
