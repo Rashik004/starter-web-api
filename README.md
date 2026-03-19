@@ -95,6 +95,39 @@ Visit the interactive API documentation at `https://localhost:5101/scalar/v1` (v
 
 The SQLite database (`starter.db`) is created and migrated automatically on first run -- no database setup required.
 
+## Rename the Project
+
+This is a template repository. After cloning, rename the `Starter` prefix to your own project name (e.g., `Acme`) using the provided script. It updates all namespaces, project references, folder names, file names, configuration values, and scripts in one command.
+
+**PowerShell (Windows):**
+
+```powershell
+./scripts/rename-project.ps1 -NewPrefix Acme
+```
+
+**Bash (Linux/macOS):**
+
+```bash
+./scripts/rename-project.sh Acme
+```
+
+The script will:
+
+1. Clean build artifacts (`bin/`, `obj/`, `.vs/`)
+2. Replace `Starter` and `starter` in all source files (`.cs`, `.csproj`, `.slnx`, `.json`, `.ps1`, `.sh`, `.md`)
+3. Rename `.csproj` files, project directories, and the `.slnx` solution file
+4. Run a verification build to confirm everything compiles
+
+After the rename, delete the old SQLite database if it exists (`starter.db`) and reopen your IDE to refresh caches.
+
+**Options:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `-NewPrefix` / `$1` | New prefix name (required, must be a valid C# identifier) |
+| `-OldPrefix` / `$2` | Previous prefix to replace (default: `Starter`, useful for re-renaming) |
+| `-SkipBuild` / `--skip-build` | Skip the verification build after renaming |
+
 ## Project Structure
 
 The solution uses the newer `.slnx` format (`Starter.WebApi.slnx`).
@@ -135,8 +168,9 @@ web-api/
 |   |-- Starter.WebApi.Tests.Architecture/     # NetArchTest module isolation + removal smoke tests
 |
 |-- scripts/
-|   |-- add-migration.sh / .ps1               # EF Core migration helper
-|   |-- update-database.sh / .ps1             # Database update helper
+|   |-- rename-project.sh / .ps1             # Rename project prefix (Starter -> YourName)
+|   |-- add-migration.sh / .ps1              # EF Core migration helper
+|   |-- update-database.sh / .ps1            # Database update helper
 ```
 
 ## Configuration
