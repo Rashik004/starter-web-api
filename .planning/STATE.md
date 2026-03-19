@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-03-19T06:05:16.221Z"
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-03-19T06:26:40.332Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-18)
 ## Current Position
 
 Phase: 06 (testing-and-validation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Plan: 2 of 3
 | Phase 05 P03 | 5min | 2 tasks | 6 files |
 | Phase 05-04 P04 | 3min | 2 tasks | 7 files |
 | Phase 06 P01 | 9min | 2 tasks | 11 files |
+| Phase 06 P02 | 17min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,9 @@ Recent decisions affecting current work:
 - [Phase 05-04]: CacheDemoController uses ApiVersionNeutral (infrastructure demo, not versioned business API)
 - [Phase 06]: Used Content Update (not Include) for appsettings.Testing.json since Microsoft.NET.Sdk.Web auto-includes content files
 - [Phase 06]: Added DynamicProxyGenAssembly2 InternalsVisibleTo to Starter.Data.csproj so Moq can proxy IRepository<TodoItem> with internal generic argument
+- [Phase 06]: Disabled xUnit parallel test collection execution to prevent Serilog static Log.Logger race conditions between factory instances
+- [Phase 06]: Used direct DbContext construction for DB seeding instead of BuildServiceProvider to avoid Serilog Freeze() in test host
+- [Phase 06]: Re-registered FluentValidation validators from Host assembly in WebApplicationFactory (GetEntryAssembly returns test runner)
 
 ### Pending Todos
 
@@ -121,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T06:05:16.217Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-03-19T06:26:40.327Z
+Stopped at: Completed 06-02-PLAN.md
 Resume file: None
