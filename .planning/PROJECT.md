@@ -28,11 +28,14 @@ Every module is independently removable — deleting one extension method call a
 - [x] Standardized API response envelope across all endpoints — Validated in Phase 5: Production Hardening
 - [x] Gzip/Brotli response compression (opt-in) — Validated in Phase 5: Production Hardening
 - [x] IOptions<T> pattern per module with strongly-typed config sections — Validated in Phase 5: Production Hardening
+- [x] Integration test project with WebApplicationFactory — Validated in Phase 6: Testing and Validation
+- [x] Unit test project with sample service-layer tests — Validated in Phase 6: Testing and Validation
+- [x] Architecture tests enforcing module isolation via NetArchTest — Validated in Phase 6: Testing and Validation
+- [x] Module removal smoke tests proving any module can be removed without breaking the build — Validated in Phase 6: Testing and Validation
 
 ### Active
 
-- [ ] Integration test project with WebApplicationFactory
-- [ ] Unit test project with sample service-layer tests
+(None — all requirements validated)
 
 ### Out of Scope
 
@@ -75,4 +78,4 @@ Every module is independently removable — deleting one extension method call a
 | FluentValidation over DataAnnotations | More expressive, testable, separates validation from models | — Pending |
 
 ---
-*Last updated: 2026-03-19 after Phase 5 (Production Hardening) completion — 16/18 requirements validated, testing phase remaining*
+*Last updated: 2026-03-19 after Phase 6 (Testing and Validation) completion — all requirements validated, v1.0 milestone complete*
