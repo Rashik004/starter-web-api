@@ -73,6 +73,8 @@ No cascading breakage. The remaining modules continue to build and run without m
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 
+No `global.json` is included -- the project builds with any .NET 10+ SDK.
+
 ## Quick Start
 
 ```bash
@@ -89,11 +91,13 @@ dotnet run --project src/Starter.WebApi
 
 The application starts at `https://localhost:5101` (HTTPS) or `http://localhost:5100` (HTTP).
 
-Visit the interactive API documentation at `https://localhost:5101/scalar/v1`.
+Visit the interactive API documentation at `https://localhost:5101/scalar/v1` (v2 also available at `/scalar/v2`).
 
 The SQLite database (`starter.db`) is created and migrated automatically on first run -- no database setup required.
 
 ## Project Structure
+
+The solution uses the newer `.slnx` format (`Starter.WebApi.slnx`).
 
 ```
 web-api/
@@ -235,6 +239,9 @@ All modules follow this same pattern. No other files need modification.
 | Starter.Compression | `AddAppCompression()` / `UseAppCompression()` | `Compression` |
 | Starter.Cors | `AddAppCors()` | `Cors` |
 | Starter.Data | `AddAppData()` / `UseAppData()` | `Database`, `ConnectionStrings` |
+| Starter.Data.Migrations.Sqlite | -- | `ConnectionStrings` |
+| Starter.Data.Migrations.SqlServer | -- | `ConnectionStrings` |
+| Starter.Data.Migrations.PostgreSql | -- | `ConnectionStrings` |
 | Starter.ExceptionHandling | `AddAppExceptionHandling()` / `UseAppExceptionHandling()` | `ExceptionHandling` |
 | Starter.HealthChecks | `AddAppHealthChecks()` / `UseAppHealthChecks()` | `HealthChecks` |
 | Starter.Logging | `AddAppLogging()` / `UseAppRequestLogging()` | `Serilog` |
@@ -244,7 +251,7 @@ All modules follow this same pattern. No other files need modification.
 | Starter.Validation | `AddAppValidation()` | -- |
 | Starter.Versioning | `AddAppVersioning()` | -- |
 
-**Note:** Modules without a config section are zero-configuration. Modules with `Use*()` methods register middleware in the HTTP pipeline.
+**Note:** Modules without a config section are zero-configuration. Modules with `Use*()` methods register middleware in the HTTP pipeline. Migration assemblies are provider-specific and have no extension methods. Compression is opt-in -- uncomment in `Program.cs` to enable.
 
 ## Running Tests
 
@@ -285,4 +292,4 @@ See the comments in `src/Starter.WebApi/appsettings.json` for per-section guidan
 
 ## License
 
-MIT
+[MIT](LICENSE)
