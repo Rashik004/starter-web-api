@@ -2,6 +2,8 @@ using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Starter.Responses.Attributes;
 using Starter.Shared.Contracts;
 using Starter.Shared.Exceptions;
 using Starter.WebApi.Models;
@@ -15,6 +17,8 @@ namespace Starter.WebApi.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/todos")]
 [Authorize]
+[EnableRateLimiting("fixed")]
+[WrapResponse]
 public class TodoController(ITodoService todoService) : ControllerBase
 {
     /// <summary>
