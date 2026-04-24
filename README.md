@@ -128,6 +128,65 @@ After the rename, delete the old SQLite database if it exists (`starter.db`) and
 | `-OldPrefix` / `$2` | Previous prefix to replace (default: `Starter`, useful for re-renaming) |
 | `-SkipBuild` / `--skip-build` | Skip the verification build after renaming |
 
+## Select Database Provider
+
+The project defaults to SQLite for zero-configuration development. If you need to standardize on SQL Server or PostgreSQL, use the database provider selection script to trim the solution down to a single provider. This removes the unused migration assemblies and updates all project references and configuration in one command.
+
+**PowerShell (Windows):**
+
+```powershell
+./scripts/select-db-provider.ps1 -Provider SqlServer
+```
+
+**Bash (Linux/macOS):**
+
+```bash
+./scripts/select-db-provider.sh --provider SqlServer
+```
+
+The script will:
+
+1. Create a backup git branch (unless `-NoBackupBranch` / `--no-backup-branch` is passed)
+2. Remove the two unused migration projects from `src/`
+3. Update the `.slnx` solution file and host `.csproj`
+4. Remove unused EF Core packages from `Starter.Data.csproj`
+5. Rewrite `DataExtensions.cs` with provider-specific configuration
+6. Rewrite `DatabaseOptions.cs` (removing `MaxRetryCount` for SQLite)
+7. Clean `appsettings.json` files (remove unused connection strings)
+8. Delete the SQLite `.db` file if switching away from SQLite
+9. Run a verification build to confirm everything compiles
+10. Stage all changes (no commit)
+
+**Options:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `-Provider` / `--provider` | Provider to keep: `Sqlite`, `SqlServer`, or `PostgreSql` (prompts if omitted) |
+| `-Prefix` / `--prefix` | Project namespace prefix (auto-detected if omitted, required if multiple `.slnx` files) |
+| `-DryRun` / `--dry-run` | Print planned changes without mutating files |
+| `-NoBackupBranch` / `--no-backup-branch` | Skip the automatic pre-trim backup branch |
+| `-Force` / `--force` | Proceed even if git working tree is dirty |
+| `-SkipBuild` / `--skip-build` | Skip the verification build after trimming |
+
+**Example (interactive):**
+
+```powershell
+./scripts/select-db-provider.ps1
+# Select provider from menu
+```
+
+**Example (SQL Server with dry-run):**
+
+```bash
+./scripts/select-db-provider.sh --provider SqlServer --dry-run
+```
+
+After the script completes, review the staged diff with `git diff --cached`, then commit when ready:
+
+```bash
+git commit -m "chore: trim DB providers to SqlServer"
+```
+
 ## Project Structure
 
 The solution uses the newer `.slnx` format (`Starter.WebApi.slnx`).
