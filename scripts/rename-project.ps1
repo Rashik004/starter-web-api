@@ -14,10 +14,33 @@
 param(
     [Parameter(Mandatory)][string]$NewPrefix,
     [string]$OldPrefix = 'Starter',
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    [switch]$IncludeBootstrapScripts
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Bootstrap scripts that should normally be left untouched so the template
+# stays reusable. Skipped from Phase 2 content replacement when
+# $script:skipBootstrap is true (default).
+$bootstrapScriptPaths = @(
+    'scripts\init-project.ps1'
+    'scripts\rename-project.ps1'
+    'scripts\rename-project.sh'
+    'scripts\select-db-provider.ps1'
+    'scripts\select-db-provider.sh'
+)
+
+# Resolve whether to skip them: explicit param wins; otherwise prompt with default Y.
+if ($PSBoundParameters.ContainsKey('IncludeBootstrapScripts')) {
+    $skipBootstrap = -not $IncludeBootstrapScripts.IsPresent
+} else {
+    Write-Host ""
+    Write-Host "Skip bootstrap scripts during content replacement?" -ForegroundColor Cyan
+    Write-Host "  (init-project, rename-project, select-db-provider .ps1/.sh)"
+    $ans = Read-Host "Skip them? [Y/n]"
+    $skipBootstrap = -not ($ans -match '^(n|no)$')
+}
 
 # ── Phase 0: Validate & Pre-flight ──────────────────────────────────────────
 
@@ -93,6 +116,15 @@ foreach ($ext in $includeExtensions) {
             if ($relativePath -match "[\\/]$([regex]::Escape($dir))[\\/]") {
                 $excluded = $true
                 break
+            }
+        }
+        if (-not $excluded -and $skipBootstrap) {
+            $rel = $relativePath.TrimStart('\', '/')
+            foreach ($bs in $bootstrapScriptPaths) {
+                if ($rel -ieq $bs -or $rel -ieq ($bs -replace '\\', '/')) {
+                    $excluded = $true
+                    break
+                }
             }
         }
         -not $excluded

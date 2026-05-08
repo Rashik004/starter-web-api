@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Usage: ./scripts/rename-project.sh <NewPrefix> [OldPrefix] [--skip-build]
+# Usage: ./scripts/rename-project.sh <NewPrefix> [OldPrefix] [--skip-build] [--include-bootstrap-scripts|--no-include-bootstrap-scripts]
 # Example: ./scripts/rename-project.sh Acme
 # Example: ./scripts/rename-project.sh Contoso Acme --skip-build
+# Example: ./scripts/rename-project.sh Acme Starter --no-include-bootstrap-scripts
 #
 # Renames the project prefix throughout the entire solution (namespaces, folders, files, config).
 # Designed for bootstrapping a new project from this template.
@@ -10,22 +11,49 @@ set -euo pipefail
 
 # ── Parse arguments ─────────────────────────────────────────────────────────
 
-NEW_PREFIX="${1:?Usage: rename-project.sh <NewPrefix> [OldPrefix] [--skip-build]}"
+NEW_PREFIX="${1:?Usage: rename-project.sh <NewPrefix> [OldPrefix] [--skip-build] [--include-bootstrap-scripts|--no-include-bootstrap-scripts]}"
 OLD_PREFIX="${2:-Test.Api}"
 SKIP_BUILD=false
+INCLUDE_BOOTSTRAP=false
+INCLUDE_BOOTSTRAP_SET=false
 
-# Check if second arg is --skip-build (no old prefix provided)
-if [[ "$OLD_PREFIX" == "--skip-build" ]]; then
-    OLD_PREFIX="Test.Api"
-    SKIP_BUILD=true
-fi
-
-# Check for --skip-build in remaining args
-for arg in "${@:3}"; do
-    if [[ "$arg" == "--skip-build" ]]; then
+# Check if second arg is a flag (no old prefix provided)
+case "$OLD_PREFIX" in
+    --skip-build)
+        OLD_PREFIX="Test.Api"
         SKIP_BUILD=true
-    fi
+        ;;
+    --include-bootstrap-scripts)
+        OLD_PREFIX="Test.Api"
+        INCLUDE_BOOTSTRAP=true
+        INCLUDE_BOOTSTRAP_SET=true
+        ;;
+    --no-include-bootstrap-scripts)
+        OLD_PREFIX="Test.Api"
+        INCLUDE_BOOTSTRAP=false
+        INCLUDE_BOOTSTRAP_SET=true
+        ;;
+esac
+
+# Remaining flags
+for arg in "${@:3}"; do
+    case "$arg" in
+        --skip-build) SKIP_BUILD=true ;;
+        --include-bootstrap-scripts) INCLUDE_BOOTSTRAP=true; INCLUDE_BOOTSTRAP_SET=true ;;
+        --no-include-bootstrap-scripts) INCLUDE_BOOTSTRAP=false; INCLUDE_BOOTSTRAP_SET=true ;;
+    esac
 done
+
+# Resolve bootstrap-script handling (default skip = true; prompt if not set)
+if [[ "$INCLUDE_BOOTSTRAP_SET" == true ]]; then
+    if [[ "$INCLUDE_BOOTSTRAP" == true ]]; then SKIP_BOOTSTRAP=false; else SKIP_BOOTSTRAP=true; fi
+else
+    echo ""
+    echo "Skip bootstrap scripts during content replacement?"
+    echo "  (init-project, rename-project, select-db-provider .ps1/.sh)"
+    read -rp "Skip them? [Y/n] " ans
+    if [[ "$ans" =~ ^[nN][oO]?$ ]]; then SKIP_BOOTSTRAP=false; else SKIP_BOOTSTRAP=true; fi
+fi
 
 # ── Phase 0: Validate & Pre-flight ─────────────────────────────────────────
 
@@ -84,6 +112,29 @@ echo "[Phase 2] Replacing file contents..."
 FILES_MODIFIED=0
 
 # Build find command with included extensions and excluded directories
+find_args=(
+    "$ROOT_DIR" -type f
+    \( -name '*.cs' -o -name '*.csproj' -o -name '*.slnx' -o -name '*.json' -o -name '*.ps1' -o -name '*.sh' -o -name '*.md' \)
+    -not -path "$ROOT_DIR/.git/*"
+    -not -path "$ROOT_DIR/.vs/*"
+    -not -path "$ROOT_DIR/.planning/*"
+    -not -path "$ROOT_DIR/.claude/*"
+    -not -path '*/bin/*'
+    -not -path '*/obj/*'
+)
+
+if [[ "$SKIP_BOOTSTRAP" == true ]]; then
+    find_args+=(
+        -not -path "$ROOT_DIR/scripts/init-project.ps1"
+        -not -path "$ROOT_DIR/scripts/rename-project.ps1"
+        -not -path "$ROOT_DIR/scripts/rename-project.sh"
+        -not -path "$ROOT_DIR/scripts/select-db-provider.ps1"
+        -not -path "$ROOT_DIR/scripts/select-db-provider.sh"
+    )
+fi
+
+find_args+=(-print0)
+
 while IFS= read -r -d '' file; do
     original_hash="$(md5sum "$file" | cut -d' ' -f1)"
 
@@ -101,16 +152,7 @@ while IFS= read -r -d '' file; do
         echo "  Updated: $rel_path"
         FILES_MODIFIED=$((FILES_MODIFIED + 1))
     fi
-done < <(find "$ROOT_DIR" \
-    -type f \
-    \( -name '*.cs' -o -name '*.csproj' -o -name '*.slnx' -o -name '*.json' -o -name '*.ps1' -o -name '*.sh' -o -name '*.md' \) \
-    -not -path "$ROOT_DIR/.git/*" \
-    -not -path "$ROOT_DIR/.vs/*" \
-    -not -path "$ROOT_DIR/.planning/*" \
-    -not -path "$ROOT_DIR/.claude/*" \
-    -not -path '*/bin/*' \
-    -not -path '*/obj/*' \
-    -print0)
+done < <(find "${find_args[@]}")
 
 echo "  $FILES_MODIFIED file(s) modified."
 echo ""

@@ -63,8 +63,8 @@ remove_line_containing() {
 
 resolve_prefix() {
     if [[ -n "$PREFIX" ]]; then
-        if [[ ! "$PREFIX" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-            echo "Invalid prefix '$PREFIX'. Must be a valid C# identifier." >&2
+        if [[ ! "$PREFIX" =~ ^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$ ]]; then
+            echo "Invalid prefix '$PREFIX'. Must be a C# identifier or dotted namespace (e.g., 'Acme' or 'Acme.Server')." >&2
             exit 1
         fi
         if [[ ! -f "$ROOT_DIR/$PREFIX.WebApi.slnx" ]]; then

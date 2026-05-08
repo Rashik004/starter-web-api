@@ -72,8 +72,8 @@ function Resolve-Prefix {
     param([string]$RootDir, [string]$Explicit)
 
     if ($Explicit) {
-        if ($Explicit -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
-            throw "Invalid prefix '$Explicit'. Must be a valid C# identifier."
+        if ($Explicit -notmatch '^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$') {
+            throw "Invalid prefix '$Explicit'. Must be a C# identifier or dotted namespace (e.g., 'Acme' or 'Acme.Server')."
         }
         $slnx = Join-Path $RootDir "src\$Explicit.WebApi.slnx"
         if (-not (Test-Path $slnx)) {
