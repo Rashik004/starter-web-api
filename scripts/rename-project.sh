@@ -79,6 +79,32 @@ fi
 NEW_PREFIX_LOWER="$(echo "$NEW_PREFIX" | tr '[:upper:]' '[:lower:]')"
 OLD_PREFIX_LOWER="$(echo "$OLD_PREFIX" | tr '[:upper:]' '[:lower:]')"
 
+# ── Phase 0.5: Detect target collisions before mutating anything ───────────
+
+collisions=()
+new_slnx="$ROOT_DIR/src/$NEW_PREFIX.WebApi.slnx"
+[[ -e "$new_slnx" ]] && collisions+=("$new_slnx")
+
+if [[ -d "$ROOT_DIR/src" ]]; then
+    while IFS= read -r -d '' path; do
+        collisions+=("$path")
+    done < <(find "$ROOT_DIR/src" -mindepth 1 \
+        -not -path '*/.vs/*' -not -path '*/bin/*' -not -path '*/obj/*' \
+        -name "$NEW_PREFIX*" -print0 2>/dev/null)
+fi
+
+if [[ ${#collisions[@]} -gt 0 ]]; then
+    echo ""
+    echo "Cannot rename: ${#collisions[@]} target path(s) already exist (likely from a prior partial run):" >&2
+    for p in "${collisions[@]}"; do
+        echo "  ${p#"$ROOT_DIR"/}" >&2
+    done
+    echo ""
+    echo "Clean up first, then re-run. Suggested:" >&2
+    echo "  git checkout HEAD -- src/ && git clean -fd src/" >&2
+    exit 1
+fi
+
 echo ""
 echo "=== Project Rename: '$OLD_PREFIX' -> '$NEW_PREFIX' ==="
 echo "  Solution root: $ROOT_DIR"

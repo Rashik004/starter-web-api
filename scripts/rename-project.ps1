@@ -62,6 +62,40 @@ if (-not (Test-Path $slnxFile)) {
 $NewPrefixLower = $NewPrefix.ToLower()
 $OldPrefixLower = $OldPrefix.ToLower()
 
+# ── Phase 0.5: Detect target collisions before mutating anything ───────────
+
+$collisions = New-Object System.Collections.Generic.List[string]
+
+$newSlnx = Join-Path $rootDir "src\$NewPrefix.WebApi.slnx"
+if (Test-Path $newSlnx) { $collisions.Add($newSlnx) }
+
+$srcRoot = Join-Path $rootDir 'src'
+$collisionExcludeDirs = @('.vs', 'bin', 'obj')
+if (Test-Path $srcRoot) {
+    Get-ChildItem -Path $srcRoot -Recurse -Force -ErrorAction SilentlyContinue | Where-Object {
+        if ($_.Name -notlike "$NewPrefix*") { return $false }
+        $rel = $_.FullName.Substring($rootDir.Length)
+        foreach ($ex in $collisionExcludeDirs) {
+            if ($rel -match "[\\/]$([regex]::Escape($ex))[\\/]") { return $false }
+        }
+        return $true
+    } | ForEach-Object { [void]$collisions.Add($_.FullName) }
+}
+
+if ($collisions.Count -gt 0) {
+    Write-Host ""
+    Write-Host "Cannot rename: $($collisions.Count) target path(s) already exist (likely from a prior partial run):" -ForegroundColor Red
+    $collisions | Select-Object -Unique | ForEach-Object {
+        $rel = $_ -replace [regex]::Escape($rootDir), '.'
+        Write-Host "  $rel" -ForegroundColor Red
+    }
+    Write-Host ""
+    Write-Host "Clean up first, then re-run. Suggested:" -ForegroundColor Yellow
+    Write-Host "  git checkout HEAD -- src/" -ForegroundColor Yellow
+    Write-Host "  git clean -fd src/" -ForegroundColor Yellow
+    throw "Aborting before any changes. Resolve collisions and retry."
+}
+
 Write-Host ""
 Write-Host "=== Project Rename: '$OldPrefix' -> '$NewPrefix' ===" -ForegroundColor Cyan
 Write-Host "  Solution root: $rootDir"
