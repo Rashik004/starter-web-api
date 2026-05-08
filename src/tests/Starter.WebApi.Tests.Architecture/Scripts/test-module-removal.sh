@@ -35,9 +35,9 @@ done
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOLUTION_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-PROGRAM_CS="$SOLUTION_ROOT/src/Starter.WebApi/Program.cs"
-CSPROJ="$SOLUTION_ROOT/src/Starter.WebApi/Starter.WebApi.csproj"
-CONTROLLERS_DIR="$SOLUTION_ROOT/src/Starter.WebApi/Controllers"
+PROGRAM_CS="$SOLUTION_ROOT/Host/Starter.WebApi/Program.cs"
+CSPROJ="$SOLUTION_ROOT/Host/Starter.WebApi/Starter.WebApi.csproj"
+CONTROLLERS_DIR="$SOLUTION_ROOT/Host/Starter.WebApi/Controllers"
 
 if [[ ! -f "$PROGRAM_CS" ]]; then
     echo "ERROR: Program.cs not found at $PROGRAM_CS"
@@ -150,7 +150,7 @@ for entry in "${MODULES[@]}"; do
 
     # 5. Run dotnet build
     BUILD_EXIT=0
-    BUILD_OUTPUT=$(dotnet build "$SOLUTION_ROOT/src/Starter.WebApi" 2>&1) || BUILD_EXIT=$?
+    BUILD_OUTPUT=$(dotnet build "$SOLUTION_ROOT/Host/Starter.WebApi" 2>&1) || BUILD_EXIT=$?
 
     if [[ $BUILD_EXIT -eq 0 ]]; then
         echo " -> PASSED"

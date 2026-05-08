@@ -15,9 +15,9 @@ $ErrorActionPreference = 'Stop'
 $rootDir = Split-Path -Parent $PSScriptRoot
 
 $projectMap = @{
-    'Sqlite'     = 'src/Starter.Data.Migrations.Sqlite'
-    'SqlServer'  = 'src/Starter.Data.Migrations.SqlServer'
-    'PostgreSql' = 'src/Starter.Data.Migrations.PostgreSql'
+    'Sqlite'     = 'src/Migrations/Starter.Data.Migrations.Sqlite'
+    'SqlServer'  = 'src/Migrations/Starter.Data.Migrations.SqlServer'
+    'PostgreSql' = 'src/Migrations/Starter.Data.Migrations.PostgreSql'
 }
 
 $project = $projectMap[$Provider]
@@ -27,7 +27,7 @@ Write-Host "Updating database for provider '$Provider'..."
 $env:Database__Provider = $Provider
 
 $efArgs = @(
-    '--startup-project', "$rootDir/src/Starter.WebApi",
+    '--startup-project', "$rootDir/src/Host/Starter.WebApi",
     '--project', "$rootDir/$project"
 )
 

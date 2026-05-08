@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Starter.Auth.Shared\Starter.Auth.Shared.csproj" />
-    <ProjectReference Include="..\Starter.Shared\Starter.Shared.csproj" />
+    <ProjectReference Include="..\..\Libraries\Starter.Shared\Starter.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -54,6 +54,7 @@ TestResult.xml
 nunit-*.xml
 azure-func-sample/.vs/
 /.vs
+/src/.vs
 
 # SQLite database files
 *.db

@@ -29,9 +29,9 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = $PSScriptRoot
 $SolutionRoot = (Resolve-Path (Join-Path $ScriptDir "..\..\.." )).Path
 
-$ProgramCs = Join-Path $SolutionRoot "src\Starter.WebApi\Program.cs"
-$Csproj = Join-Path $SolutionRoot "src\Starter.WebApi\Starter.WebApi.csproj"
-$ControllersDir = Join-Path $SolutionRoot "src\Starter.WebApi\Controllers"
+$ProgramCs = Join-Path $SolutionRoot "Host\Starter.WebApi\Program.cs"
+$Csproj = Join-Path $SolutionRoot "Host\Starter.WebApi\Starter.WebApi.csproj"
+$ControllersDir = Join-Path $SolutionRoot "Host\Starter.WebApi\Controllers"
 
 if (-not (Test-Path $ProgramCs)) {
     Write-Error "Program.cs not found at $ProgramCs"
@@ -125,7 +125,7 @@ foreach ($mod in $Modules) {
         }
 
         # 5. Run dotnet build
-        $buildOutput = & dotnet build "$SolutionRoot\src\Starter.WebApi" 2>&1
+        $buildOutput = & dotnet build "$SolutionRoot\Host\Starter.WebApi" 2>&1
         $buildExitCode = $LASTEXITCODE
 
         if ($buildExitCode -eq 0) {

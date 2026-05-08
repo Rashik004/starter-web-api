@@ -1,0 +1,36 @@
+﻿<Solution>
+  <Folder Name="/Host/">
+    <Project Path="Host/Starter.WebApi/Starter.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="Libraries/Starter.Shared/Starter.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Modules/">
+    <Project Path="Modules/Starter.ExceptionHandling/Starter.ExceptionHandling.csproj" />
+    <Project Path="Modules/Starter.Logging/Starter.Logging.csproj" />
+    <Project Path="Modules/Starter.Auth.Shared/Starter.Auth.Shared.csproj" />
+    <Project Path="Modules/Starter.Data/Starter.Data.csproj" />
+    <Project Path="Modules/Starter.Versioning/Starter.Versioning.csproj" />
+    <Project Path="Modules/Starter.Cors/Starter.Cors.csproj" />
+    <Project Path="Modules/Starter.OpenApi/Starter.OpenApi.csproj" />
+    <Project Path="Modules/Starter.Validation/Starter.Validation.csproj" />
+    <Project Path="Modules/Starter.Auth.Identity/Starter.Auth.Identity.csproj" />
+    <Project Path="Modules/Starter.Auth.Jwt/Starter.Auth.Jwt.csproj" />
+    <Project Path="Modules/Starter.Auth.Google/Starter.Auth.Google.csproj" />
+    <Project Path="Modules/Starter.RateLimiting/Starter.RateLimiting.csproj" />
+    <Project Path="Modules/Starter.Compression/Starter.Compression.csproj" />
+    <Project Path="Modules/Starter.Caching/Starter.Caching.csproj" />
+    <Project Path="Modules/Starter.HealthChecks/Starter.HealthChecks.csproj" />
+    <Project Path="Modules/Starter.Responses/Starter.Responses.csproj" />
+  </Folder>
+  <Folder Name="/Migrations/">
+    <Project Path="Migrations/Starter.Data.Migrations.Sqlite/Starter.Data.Migrations.Sqlite.csproj" />
+    <Project Path="Migrations/Starter.Data.Migrations.SqlServer/Starter.Data.Migrations.SqlServer.csproj" />
+    <Project Path="Migrations/Starter.Data.Migrations.PostgreSql/Starter.Data.Migrations.PostgreSql.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/Starter.WebApi.Tests.Integration/Starter.WebApi.Tests.Integration.csproj" />
+    <Project Path="tests/Starter.WebApi.Tests.Unit/Starter.WebApi.Tests.Unit.csproj" />
+    <Project Path="tests/Starter.WebApi.Tests.Architecture/Starter.WebApi.Tests.Architecture.csproj" />
+  </Folder>
+</Solution>

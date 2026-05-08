@@ -30,7 +30,7 @@ if ($NewPrefix -eq $OldPrefix) {
 }
 
 $rootDir = Split-Path -Parent $PSScriptRoot
-$slnxFile = Join-Path $rootDir "$OldPrefix.WebApi.slnx"
+$slnxFile = Join-Path $rootDir "src\$OldPrefix.WebApi.slnx"
 
 if (-not (Test-Path $slnxFile)) {
     throw "Solution file not found: $slnxFile. Are you running from the correct repo?"
@@ -130,11 +130,9 @@ Write-Host "[Phase 3] Renaming .csproj files..." -ForegroundColor Cyan
 
 $csprojsRenamed = 0
 
-foreach ($parent in @('src', 'tests')) {
-    $parentPath = Join-Path $rootDir $parent
-    if (-not (Test-Path $parentPath)) { continue }
-
-    Get-ChildItem -Path $parentPath -Filter '*.csproj' -Recurse -File | Where-Object {
+$srcPath = Join-Path $rootDir 'src'
+if (Test-Path $srcPath) {
+    Get-ChildItem -Path $srcPath -Filter '*.csproj' -Recurse -File | Where-Object {
         $_.Name -like "$OldPrefix*"
     } | ForEach-Object {
         $newName = $_.Name -creplace [regex]::Escape($OldPrefix), $NewPrefix
@@ -153,17 +151,13 @@ Write-Host "[Phase 4] Renaming project directories..." -ForegroundColor Cyan
 
 $dirsRenamed = 0
 
-foreach ($parent in @('src', 'tests')) {
-    $parentPath = Join-Path $rootDir $parent
-    if (-not (Test-Path $parentPath)) { continue }
-
-    # Get immediate child directories starting with old prefix
-    # Process in reverse order to handle nested paths correctly
-    Get-ChildItem -Path $parentPath -Directory | Where-Object {
+$srcPath = Join-Path $rootDir 'src'
+if (Test-Path $srcPath) {
+    # Recurse all depths; sort deepest-first to avoid path invalidation
+    Get-ChildItem -Path $srcPath -Directory -Recurse | Where-Object {
         $_.Name -like "$OldPrefix*"
     } | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {
         $newName = $_.Name -creplace [regex]::Escape($OldPrefix), $NewPrefix
-        $newPath = Join-Path $_.Parent.FullName $newName
         Rename-Item -Path $_.FullName -NewName $newName
         Write-Host "  $($_.Name) -> $newName"
         $dirsRenamed++
@@ -179,14 +173,14 @@ Write-Host "[Phase 5] Renaming solution file..." -ForegroundColor Cyan
 
 $oldSlnxName = "$OldPrefix.WebApi.slnx"
 $newSlnxName = "$NewPrefix.WebApi.slnx"
-$oldSlnxPath = Join-Path $rootDir $oldSlnxName
-$newSlnxPath = Join-Path $rootDir $newSlnxName
+$oldSlnxPath = Join-Path $rootDir "src\$oldSlnxName"
+$newSlnxPath = Join-Path $rootDir "src\$newSlnxName"
 
 if (Test-Path $oldSlnxPath) {
     Rename-Item -Path $oldSlnxPath -NewName $newSlnxName
-    Write-Host "  $oldSlnxName -> $newSlnxName"
+    Write-Host "  src/$oldSlnxName -> src/$newSlnxName"
 } else {
-    Write-Host "  Solution file '$oldSlnxName' not found (may have been renamed already)." -ForegroundColor Yellow
+    Write-Host "  Solution file 'src/$oldSlnxName' not found (may have been renamed already)." -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -202,7 +196,7 @@ Write-Host ""
 
 if (-not $SkipBuild) {
     Write-Host "[Phase 6] Running verification build..." -ForegroundColor Cyan
-    $newSlnx = Join-Path $rootDir $newSlnxName
+    $newSlnx = Join-Path $rootDir "src\$newSlnxName"
     dotnet build $newSlnx
     if ($LASTEXITCODE -ne 0) {
         Write-Host ""

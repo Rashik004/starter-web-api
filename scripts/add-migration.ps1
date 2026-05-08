@@ -14,21 +14,21 @@ $ErrorActionPreference = 'Stop'
 $rootDir = Split-Path -Parent $PSScriptRoot
 
 $projectMap = @{
-    'Sqlite'     = 'src/Starter.Data.Migrations.Sqlite'
-    'SqlServer'  = 'src/Starter.Data.Migrations.SqlServer'
-    'PostgreSql' = 'src/Starter.Data.Migrations.PostgreSql'
+    'Sqlite'     = 'src/Migrations/Starter.Data.Migrations.Sqlite'
+    'SqlServer'  = 'src/Migrations/Starter.Data.Migrations.SqlServer'
+    'PostgreSql' = 'src/Migrations/Starter.Data.Migrations.PostgreSql'
 }
 
 $project = $projectMap[$Provider]
 
 Write-Host "Adding migration '$MigrationName' for provider '$Provider'..."
 Write-Host "  Migration project: $project"
-Write-Host "  Startup project:   src/Starter.WebApi"
+Write-Host "  Startup project:   src/Host/Starter.WebApi"
 
 $env:Database__Provider = $Provider
 
 dotnet ef migrations add $MigrationName `
-    --startup-project "$rootDir/src/Starter.WebApi" `
+    --startup-project "$rootDir/src/Host/Starter.WebApi" `
     --project "$rootDir/$project"
 
 if ($LASTEXITCODE -ne 0) { throw "Migration failed with exit code $LASTEXITCODE" }

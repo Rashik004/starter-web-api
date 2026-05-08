@@ -75,14 +75,15 @@ function Resolve-Prefix {
         if ($Explicit -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
             throw "Invalid prefix '$Explicit'. Must be a valid C# identifier."
         }
-        $slnx = Join-Path $RootDir "$Explicit.WebApi.slnx"
+        $slnx = Join-Path $RootDir "src\$Explicit.WebApi.slnx"
         if (-not (Test-Path $slnx)) {
-            throw "No '$Explicit.WebApi.slnx' in $RootDir. Check -Prefix value."
+            throw "No 'src\$Explicit.WebApi.slnx' found. Check -Prefix value."
         }
         return $Explicit
     }
 
-    $slnxFiles = @(Get-ChildItem -Path $RootDir -Filter '*.WebApi.slnx' -File -ErrorAction SilentlyContinue)
+    $slnxSearch = Join-Path $RootDir 'src'
+    $slnxFiles = @(Get-ChildItem -Path $slnxSearch -Filter '*.WebApi.slnx' -File -ErrorAction SilentlyContinue)
     if ($slnxFiles.Count -eq 1) {
         $detected = $slnxFiles[0].BaseName -replace '\.WebApi$', ''
         Write-Step 'DETECT' "Prefix '$detected' (from $($slnxFiles[0].Name))" 'Green'
@@ -310,7 +311,7 @@ try {
     # -----------------------------------------------------------------------
 
     foreach ($d in $drop) {
-        $path = Join-Path $rootDir "src/$Prefix.Data.Migrations.$d"
+        $path = Join-Path $rootDir "src/Migrations/$Prefix.Data.Migrations.$d"
         if (Test-Path $path) {
             Write-Step 'DELETE' $path 'Red'
             if (-not $DryRun) { Remove-Item -Recurse -Force $path }
@@ -323,12 +324,12 @@ try {
     # 3. Edit .slnx
     # -----------------------------------------------------------------------
 
-    $slnxPath = Join-Path $rootDir "$Prefix.WebApi.slnx"
+    $slnxPath = Join-Path $rootDir "src/$Prefix.WebApi.slnx"
     Write-Step 'EDIT' $slnxPath
     if (-not $DryRun) {
         [xml]$slnx = Get-Content $slnxPath -Raw
         foreach ($d in $drop) {
-            $pattern = "src/$Prefix.Data.Migrations.$d/$Prefix.Data.Migrations.$d.csproj"
+            $pattern = "Migrations/$Prefix.Data.Migrations.$d/$Prefix.Data.Migrations.$d.csproj"
             $nodes = @($slnx.SelectNodes("//Project[@Path='$pattern']"))
             foreach ($n in $nodes) { [void]$n.ParentNode.RemoveChild($n) }
         }
@@ -339,12 +340,12 @@ try {
     # 4. Edit host .csproj
     # -----------------------------------------------------------------------
 
-    $hostCsprojPath = Join-Path $rootDir "src/$Prefix.WebApi/$Prefix.WebApi.csproj"
+    $hostCsprojPath = Join-Path $rootDir "src/Host/$Prefix.WebApi/$Prefix.WebApi.csproj"
     Write-Step 'EDIT' $hostCsprojPath
     if (-not $DryRun) {
         [xml]$hostCsproj = Get-Content $hostCsprojPath -Raw
         foreach ($d in $drop) {
-            $rel = "..\$Prefix.Data.Migrations.$d\$Prefix.Data.Migrations.$d.csproj"
+            $rel = "..\..\Migrations\$Prefix.Data.Migrations.$d\$Prefix.Data.Migrations.$d.csproj"
             $nodes = @($hostCsproj.SelectNodes("//ProjectReference[@Include='$rel']"))
             foreach ($n in $nodes) { [void]$n.ParentNode.RemoveChild($n) }
         }
@@ -355,7 +356,7 @@ try {
     # 5. Edit data .csproj: drop InternalsVisibleTo + unused EF packages
     # -----------------------------------------------------------------------
 
-    $dataCsprojPath = Join-Path $rootDir "src/$Prefix.Data/$Prefix.Data.csproj"
+    $dataCsprojPath = Join-Path $rootDir "src/Modules/$Prefix.Data/$Prefix.Data.csproj"
     Write-Step 'EDIT' $dataCsprojPath
     $providerPackage = @{
         'Sqlite'     = 'Microsoft.EntityFrameworkCore.Sqlite'
@@ -381,7 +382,7 @@ try {
     # 6. Rewrite DataExtensions.cs
     # -----------------------------------------------------------------------
 
-    $dataExtPath = Join-Path $rootDir "src/$Prefix.Data/DataExtensions.cs"
+    $dataExtPath = Join-Path $rootDir "src/Modules/$Prefix.Data/DataExtensions.cs"
     Write-Step 'EDIT' $dataExtPath
     if (-not $DryRun) {
         Set-Content -Path $dataExtPath -Value (Get-DataExtensionsTemplate -Keep $Provider -Pfx $Prefix) -Encoding UTF8
@@ -391,7 +392,7 @@ try {
     # 7. Rewrite DatabaseOptions.cs
     # -----------------------------------------------------------------------
 
-    $dbOptsPath = Join-Path $rootDir "src/$Prefix.Data/Options/DatabaseOptions.cs"
+    $dbOptsPath = Join-Path $rootDir "src/Modules/$Prefix.Data/Options/DatabaseOptions.cs"
     Write-Step 'EDIT' $dbOptsPath
     if (-not $DryRun) {
         Set-Content -Path $dbOptsPath -Value (Get-DatabaseOptionsTemplate -Keep $Provider -Pfx $Prefix) -Encoding UTF8
@@ -402,8 +403,8 @@ try {
     # -----------------------------------------------------------------------
 
     $appsettingsFiles = @(
-        "src/$Prefix.WebApi/appsettings.json"
-        "src/$Prefix.WebApi/appsettings.Development.json"
+        "src/Host/$Prefix.WebApi/appsettings.json"
+        "src/Host/$Prefix.WebApi/appsettings.Development.json"
     )
     foreach ($rel in $appsettingsFiles) {
         $path = Join-Path $rootDir $rel
@@ -439,7 +440,7 @@ try {
     # -----------------------------------------------------------------------
 
     if ($Provider -ne 'Sqlite') {
-        $hostDir = Join-Path $rootDir "src/$Prefix.WebApi"
+        $hostDir = Join-Path $rootDir "src/Host/$Prefix.WebApi"
         if (Test-Path $hostDir) {
             $dbFiles = Get-ChildItem -Path $hostDir -Filter "$prefixLower.db*" -ErrorAction SilentlyContinue
             foreach ($f in $dbFiles) {
@@ -454,8 +455,8 @@ try {
     # -----------------------------------------------------------------------
 
     $archScripts = @(
-        "tests/$Prefix.WebApi.Tests.Architecture/Scripts/test-module-removal.ps1"
-        "tests/$Prefix.WebApi.Tests.Architecture/Scripts/test-module-removal.sh"
+        "src/tests/$Prefix.WebApi.Tests.Architecture/Scripts/test-module-removal.ps1"
+        "src/tests/$Prefix.WebApi.Tests.Architecture/Scripts/test-module-removal.sh"
     )
     foreach ($rel in $archScripts) {
         $path = Join-Path $rootDir $rel
@@ -470,10 +471,11 @@ try {
 
     if (-not $DryRun -and -not $SkipBuild) {
         Write-Host ""
+        $slnx = Join-Path $rootDir "src/$Prefix.WebApi.slnx"
         Write-Step 'BUILD' 'dotnet restore + build' 'Green'
-        dotnet restore | Out-Null
+        dotnet restore $slnx | Out-Null
         if ($LASTEXITCODE -ne 0) { throw 'dotnet restore failed.' }
-        dotnet build --nologo -v quiet
+        dotnet build $slnx --nologo -v quiet
         if ($LASTEXITCODE -ne 0) {
             Write-Host ""
             Write-Host "Build failed. Rollback with:" -ForegroundColor Red

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -18,7 +18,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Starter.WebApi\Starter.WebApi.csproj" />
+    <ProjectReference Include="..\..\Host\Starter.WebApi\Starter.WebApi.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.Compression\Starter.Compression.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.Cors\Starter.Cors.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.ExceptionHandling\Starter.ExceptionHandling.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.HealthChecks\Starter.HealthChecks.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.Logging\Starter.Logging.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.OpenApi\Starter.OpenApi.csproj" />
+    <ProjectReference Include="..\..\Modules\Starter.RateLimiting\Starter.RateLimiting.csproj" />
   </ItemGroup>
 
   <ItemGroup>

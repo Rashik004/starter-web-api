@@ -8,9 +8,9 @@ Solution file: `Starter.WebApi.slnx` (newer .slnx format).
 
 ```bash
 dotnet build                                         # Build solution
-dotnet run --project src/Starter.WebApi              # Run application
+dotnet run --project src/Host/Starter.WebApi         # Run application
 dotnet test                                          # Run all tests
-dotnet test tests/Starter.WebApi.Tests.Unit          # Run specific test project
+dotnet test src/tests/Starter.WebApi.Tests.Unit      # Run specific test project
 ```
 
 - HTTPS: https://localhost:5101
@@ -54,7 +54,7 @@ This is the key convention. Every module follows this structure:
 ## Database
 
 - EF Core 10 with provider-switchable design (SQLite default, SqlServer, PostgreSQL)
-- Separate migration assemblies per provider under `src/Starter.Data.Migrations.{Provider}/`
+- Separate migration assemblies per provider under `src/Migrations/Starter.Data.Migrations.{Provider}/`
 - Migration scripts in `scripts/` directory (`add-migration.sh`/`.ps1`, `update-database.sh`/`.ps1`)
 - SQLite DB file: `starter.db` in host project (auto-created, gitignored)
 
