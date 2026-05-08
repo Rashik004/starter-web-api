@@ -471,11 +471,11 @@ try {
 
     if (-not $DryRun -and -not $SkipBuild) {
         Write-Host ""
-        $slnx = Join-Path $rootDir "src/$Prefix.WebApi.slnx"
+        $slnxBuildPath = Join-Path $rootDir "src/$Prefix.WebApi.slnx"
         Write-Step 'BUILD' 'dotnet restore + build' 'Green'
-        dotnet restore $slnx | Out-Null
+        dotnet restore $slnxBuildPath | Out-Null
         if ($LASTEXITCODE -ne 0) { throw 'dotnet restore failed.' }
-        dotnet build $slnx --nologo -v quiet
+        dotnet build $slnxBuildPath --nologo -v quiet
         if ($LASTEXITCODE -ne 0) {
             Write-Host ""
             Write-Host "Build failed. Rollback with:" -ForegroundColor Red
