@@ -11,12 +11,12 @@ set -euo pipefail
 # ── Parse arguments ─────────────────────────────────────────────────────────
 
 NEW_PREFIX="${1:?Usage: rename-project.sh <NewPrefix> [OldPrefix] [--skip-build]}"
-OLD_PREFIX="${2:-Starter}"
+OLD_PREFIX="${2:-Test.Api}"
 SKIP_BUILD=false
 
 # Check if second arg is --skip-build (no old prefix provided)
 if [[ "$OLD_PREFIX" == "--skip-build" ]]; then
-    OLD_PREFIX="Starter"
+    OLD_PREFIX="Test.Api"
     SKIP_BUILD=true
 fi
 
@@ -29,8 +29,8 @@ done
 
 # ── Phase 0: Validate & Pre-flight ─────────────────────────────────────────
 
-if [[ ! "$NEW_PREFIX" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-    echo "Error: Invalid prefix '$NEW_PREFIX'. Must be a valid C# identifier." >&2
+if [[ ! "$NEW_PREFIX" =~ ^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$ ]]; then
+    echo "Error: Invalid prefix '$NEW_PREFIX'. Must be a C# identifier or dotted namespace (e.g., 'Acme' or 'Acme.Server'). Hyphens are not allowed." >&2
     exit 1
 fi
 

@@ -2,7 +2,7 @@
 .SYNOPSIS
     Renames the project prefix throughout the entire solution (namespaces, folders, files, config).
 .DESCRIPTION
-    Replaces all occurrences of the old prefix (default "Starter") with a new prefix in file contents,
+    Replaces all occurrences of the old prefix (default "Test.Api") with a new prefix in file contents,
     file names, and directory names. Designed for bootstrapping a new project from this template.
 .EXAMPLE
     ./scripts/rename-project.ps1 -NewPrefix Acme
@@ -13,7 +13,7 @@
 #>
 param(
     [Parameter(Mandatory)][string]$NewPrefix,
-    [string]$OldPrefix = 'Starter',
+    [string]$OldPrefix = 'Test.Api',
     [switch]$SkipBuild
 )
 
@@ -21,8 +21,8 @@ $ErrorActionPreference = 'Stop'
 
 # ── Phase 0: Validate & Pre-flight ──────────────────────────────────────────
 
-if ($NewPrefix -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
-    throw "Invalid prefix '$NewPrefix'. Must be a valid C# identifier (start with letter/underscore, alphanumeric)."
+if ($NewPrefix -notmatch '^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$') {
+    throw "Invalid prefix '$NewPrefix'. Must be a C# identifier or dotted namespace (e.g., 'Acme' or 'Acme.Server'). Hyphens are not allowed."
 }
 
 if ($NewPrefix -eq $OldPrefix) {
@@ -104,10 +104,10 @@ foreach ($ext in $includeExtensions) {
 
         $original = $content
 
-        # Pass 1: PascalCase replacement (e.g., Starter -> Acme)
+        # Pass 1: PascalCase replacement (e.g., Test.Api -> Acme)
         $content = $content -creplace [regex]::Escape($OldPrefix), $NewPrefix
 
-        # Pass 2: Lowercase replacement (e.g., starter -> acme)
+        # Pass 2: Lowercase replacement (e.g., test.api -> acme)
         if ($OldPrefixLower -cne $OldPrefix) {
             $content = $content -creplace [regex]::Escape($OldPrefixLower), $NewPrefixLower
         }
