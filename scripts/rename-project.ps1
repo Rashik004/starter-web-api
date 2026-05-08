@@ -2,7 +2,7 @@
 .SYNOPSIS
     Renames the project prefix throughout the entire solution (namespaces, folders, files, config).
 .DESCRIPTION
-    Replaces all occurrences of the old prefix (default "Test.Api") with a new prefix in file contents,
+    Replaces all occurrences of the old prefix (default "Starter") with a new prefix in file contents,
     file names, and directory names. Designed for bootstrapping a new project from this template.
 .EXAMPLE
     ./scripts/rename-project.ps1 -NewPrefix Acme
@@ -13,7 +13,7 @@
 #>
 param(
     [Parameter(Mandatory)][string]$NewPrefix,
-    [string]$OldPrefix = 'Test.Api',
+    [string]$OldPrefix = 'Starter',
     [switch]$SkipBuild
 )
 
@@ -104,10 +104,10 @@ foreach ($ext in $includeExtensions) {
 
         $original = $content
 
-        # Pass 1: PascalCase replacement (e.g., Test.Api -> Acme)
+        # Pass 1: PascalCase replacement (e.g., Starter -> Acme)
         $content = $content -creplace [regex]::Escape($OldPrefix), $NewPrefix
 
-        # Pass 2: Lowercase replacement (e.g., test.api -> acme)
+        # Pass 2: Lowercase replacement (e.g., starter -> acme)
         if ($OldPrefixLower -cne $OldPrefix) {
             $content = $content -creplace [regex]::Escape($OldPrefixLower), $NewPrefixLower
         }
