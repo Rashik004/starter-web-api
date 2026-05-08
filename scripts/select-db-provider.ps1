@@ -266,13 +266,14 @@ try {
     if (-not $Provider) {
         Write-Host ""
         Write-Host "Select the database provider to keep:" -ForegroundColor Cyan
-        Write-Host "  1) Sqlite     (default, file-based)"
-        Write-Host "  2) SqlServer"
+        Write-Host "  1) SqlServer  (default)"
+        Write-Host "  2) Sqlite     (file-based)"
         Write-Host "  3) PostgreSql"
-        $choice = Read-Host "Choice [1-3]"
+        $choice = Read-Host "Choice [1-3] (default: 1)"
+        if ([string]::IsNullOrWhiteSpace($choice)) { $choice = '1' }
         $Provider = switch ($choice) {
-            '1' { 'Sqlite' }
-            '2' { 'SqlServer' }
+            '1' { 'SqlServer' }
+            '2' { 'Sqlite' }
             '3' { 'PostgreSql' }
             default { throw "Invalid choice: $choice" }
         }

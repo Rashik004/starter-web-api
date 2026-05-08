@@ -265,13 +265,14 @@ fi
 if [[ -z "$PROVIDER" ]]; then
     echo ""
     echo "Select the database provider to keep:"
-    echo "  1) Sqlite     (default, file-based)"
-    echo "  2) SqlServer"
+    echo "  1) SqlServer  (default)"
+    echo "  2) Sqlite     (file-based)"
     echo "  3) PostgreSql"
-    read -r -p "Choice [1-3] " choice
+    read -r -p "Choice [1-3] (default: 1) " choice
+    choice="${choice:-1}"
     case "$choice" in
-        1) PROVIDER=Sqlite ;;
-        2) PROVIDER=SqlServer ;;
+        1) PROVIDER=SqlServer ;;
+        2) PROVIDER=Sqlite ;;
         3) PROVIDER=PostgreSql ;;
         *) echo "Invalid choice: $choice" >&2; exit 1 ;;
     esac
