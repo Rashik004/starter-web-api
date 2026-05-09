@@ -22,9 +22,12 @@
     Forwarded to select-db-provider only.
 .PARAMETER IncludeBootstrapScripts
     If set, the rename phase rewrites the bootstrap scripts themselves
-    (init-project, rename-project, select-db-provider .ps1/.sh). Default: skip them
-    so the template stays reusable. If neither this nor its inverse is passed,
-    the orchestrator prompts (default Y = skip).
+    (init-project, rename-project, select-db-provider .ps1/.sh). Default: skip
+    them silently so the template stays reusable. Power users opt in.
+.PARAMETER NoJwtSecret
+    Skip auto-generation of the Jwt:SecretKey user-secret. Default: generate a
+    48-byte base64 key and store it via 'dotnet user-secrets'. Pass this for
+    CI/automated bootstraps where the secret is supplied separately.
 .EXAMPLE
     ./scripts/init-project.ps1 -NewPrefix Acme -Provider Sqlite
 .EXAMPLE
@@ -40,7 +43,8 @@ param(
     [switch]$Force,
     [switch]$SkipBuild,
     [switch]$NoBackupBranch,
-    [switch]$IncludeBootstrapScripts
+    [switch]$IncludeBootstrapScripts,
+    [switch]$NoJwtSecret
 )
 
 $ErrorActionPreference = 'Stop'
@@ -89,30 +93,24 @@ if (-not $Force) {
 if (-not $Provider) {
     Write-Host ""
     Write-Host "Select the database provider to keep:" -ForegroundColor Cyan
-    Write-Host "  1) SqlServer  (default)"
-    Write-Host "  2) Sqlite     (file-based)"
+    Write-Host "  1) Sqlite     (default, zero-config, file-based)"
+    Write-Host "  2) SqlServer"
     Write-Host "  3) PostgreSql"
     $choice = Read-Host "Choice [1-3] (default: 1)"
     if ([string]::IsNullOrWhiteSpace($choice)) { $choice = '1' }
     $Provider = switch ($choice) {
-        '1' { 'SqlServer' }
-        '2' { 'Sqlite' }
+        '1' { 'Sqlite' }
+        '2' { 'SqlServer' }
         '3' { 'PostgreSql' }
         default { throw "Invalid choice: $choice" }
     }
 }
 
 # ── Phase 2b: Resolve bootstrap-script handling ────────────────────────────
+# Default: skip the bootstrap scripts so the template stays reusable.
+# Power users opt in with -IncludeBootstrapScripts.
 
-if ($PSBoundParameters.ContainsKey('IncludeBootstrapScripts')) {
-    $skipBootstrap = -not $IncludeBootstrapScripts.IsPresent
-} else {
-    Write-Host ""
-    Write-Host "Skip bootstrap scripts during content replacement?" -ForegroundColor Cyan
-    Write-Host "  (init-project, rename-project, select-db-provider .ps1/.sh)"
-    $ans = Read-Host "Skip them? [Y/n]"
-    $skipBootstrap = -not ($ans -match '^(n|no)$')
-}
+$skipBootstrap = -not $IncludeBootstrapScripts.IsPresent
 
 # ── Phase 3: Combined plan summary ─────────────────────────────────────────
 
@@ -123,9 +121,13 @@ Write-Host "  Provider:      keep $Provider (drop the others)"
 Write-Host "  SkipBuild:     $SkipBuild"
 Write-Host "  Backup br.:    $(-not $NoBackupBranch)"
 Write-Host "  Skip bootstr.: $skipBootstrap"
+Write-Host "  JWT secret:    $(if ($NoJwtSecret) { 'skipped' } else { 'auto-generate' })"
 Write-Host ""
-Write-Host "  Step 1/2: scripts/rename-project.ps1"
-Write-Host "  Step 2/2: scripts/select-db-provider.ps1 (with -Force, since rename leaves tree dirty)"
+Write-Host "  Step 1/3: scripts/rename-project.ps1"
+Write-Host "  Step 2/3: scripts/select-db-provider.ps1 (with -Force, since rename leaves tree dirty)"
+if (-not $NoJwtSecret) {
+    Write-Host "  Step 3/3: dotnet user-secrets set Jwt:SecretKey (auto-generated)"
+}
 Write-Host ""
 
 if (-not $Force) {
@@ -135,7 +137,7 @@ if (-not $Force) {
 # ── Phase 4: Rename ────────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host ">>> [1/2] Running rename-project.ps1..." -ForegroundColor Green
+Write-Host ">>> [1/3] Running rename-project.ps1..." -ForegroundColor Green
 Write-Host ""
 
 $renameArgs = @{
@@ -153,7 +155,7 @@ if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
 # ── Phase 5: DB trim ───────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host ">>> [2/2] Running select-db-provider.ps1..." -ForegroundColor Green
+Write-Host ">>> [2/3] Running select-db-provider.ps1..." -ForegroundColor Green
 Write-Host ""
 
 $trimArgs = @{
@@ -169,12 +171,39 @@ if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
     throw "select-db-provider.ps1 failed (exit $LASTEXITCODE). Rename succeeded; trim did not."
 }
 
-# ── Phase 6: Done ──────────────────────────────────────────────────────────
+# ── Phase 6: JWT signing key ───────────────────────────────────────────────
+
+if (-not $NoJwtSecret) {
+    Write-Host ""
+    Write-Host ">>> [3/3] Generating JWT signing key..." -ForegroundColor Green
+    Write-Host ""
+
+    $hostCsproj = Join-Path $rootDir "src/Host/$NewPrefix.WebApi/$NewPrefix.WebApi.csproj"
+    if (-not (Test-Path $hostCsproj)) {
+        Write-Host "WARNING: host csproj not found at $hostCsproj -- skipping JWT secret." -ForegroundColor Yellow
+    } else {
+        # Generate a 48-byte (384-bit) base64-encoded secret.
+        $secretBytes = [System.Security.Cryptography.RandomNumberGenerator]::GetBytes(48)
+        $jwtSecret = [Convert]::ToBase64String($secretBytes)
+
+        # Idempotent: 'init' adds a UserSecretsId only if absent.
+        dotnet user-secrets init --project $hostCsproj | Out-Null
+        dotnet user-secrets set 'Jwt:SecretKey' $jwtSecret --project $hostCsproj | Out-Null
+
+        Write-Host "JWT signing key written to user-secrets store for $NewPrefix.WebApi."
+        Write-Host "  (Secret value is not echoed. Retrieve with: dotnet user-secrets list --project src/Host/$NewPrefix.WebApi)"
+    }
+}
+
+# ── Phase 7: Done ──────────────────────────────────────────────────────────
 
 Write-Host ""
 Write-Host "=== init-project complete ===" -ForegroundColor Green
 Write-Host "  Renamed:  $OldPrefix -> $NewPrefix"
 Write-Host "  Provider: $Provider"
+if (-not $NoJwtSecret) {
+    Write-Host "  JWT key:  set in user-secrets"
+}
 Write-Host ""
 Write-Host "Next:" -ForegroundColor Yellow
 Write-Host "  - Review staged diff: git diff --cached"
