@@ -455,3 +455,9 @@ git commit -m "docs(docker): note SqlServer/Postgres verification gap"
 - Task 4 Step 4's `until` loop has no timeout. If the container never goes healthy (e.g., DB migration hangs), the loop runs forever. Add `timeout 60 bash -c 'until ...'` if running unattended.
 - Task 4 Step 7 assumes `jq` is installed. Acceptable — README's "Try It" section already requires it.
 - If `docker compose down -v` removed an important volume in Task 4 Step 1, the only data loss is the SQLite file in `starter-data` volume — disposable for verification.
+
+---
+
+## Plan Correction (post-Task 3)
+
+Task 4 verification surfaced that Tasks 2 and 3 as originally written were incompatible. Task 2 changed `context: .` → `context: ..` so the build would work without `--project-directory`, while Task 3 added `--project-directory .` to all README invocations for `.env` discovery. With `--project-directory .` set to the repo root, compose resolves `context: ..` to the repo-root's *parent* (no Dockerfile there) and the build fails. Task 2's `context: ..` change has been reverted: compose files now keep the original `context: .`, and the correct working invocation is `docker compose --project-directory . -f docker/compose.<x>.yaml ...` — `--project-directory .` makes `context: .` resolve to the repo root, which has the Dockerfile and the `.env` file. Both interpolation and build work.
