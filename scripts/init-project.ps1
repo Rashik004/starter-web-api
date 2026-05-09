@@ -291,7 +291,7 @@ if (-not $NoEnvFile) {
             Write-Host "WARNING: PowerShell on this OS cannot harden .env ACL. Run: chmod 600 .env" -ForegroundColor Yellow
         }
 
-        Write-Host "Wrote .env (gitignored). Run: docker compose up"
+        Write-Host "Wrote .env (gitignored). Run: docker compose --project-directory . -f docker/compose.yaml up"
         $envWritten = $true
     }
 }
