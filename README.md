@@ -58,10 +58,12 @@ Run the API in a container — no .NET SDK or local DB needed.
 Pick a provider:
 
 ```bash
-docker compose -f docker/compose.sqlite.yaml     up -d   # SQLite (default)
-docker compose -f docker/compose.postgres.yaml   up -d   # PostgreSQL
-docker compose -f docker/compose.sqlserver.yaml  up -d   # SQL Server
+docker compose --project-directory . -f docker/compose.sqlite.yaml     up -d   # SQLite (default)
+docker compose --project-directory . -f docker/compose.postgres.yaml   up -d   # PostgreSQL
+docker compose --project-directory . -f docker/compose.sqlserver.yaml  up -d   # SQL Server
 ```
+
+The `--project-directory .` flag tells compose to read `.env` from the repo root (where `.env.example` lives). Without it, compose looks for `docker/.env` and silently sets `JWT_SECRET_KEY` to blank, which fails IOptions validation at startup.
 
 The compose files read `JWT_SECRET_KEY`, `CORS_ORIGIN`, and provider passwords from `.env`. Copy the template and fill in values:
 
@@ -75,7 +77,7 @@ cp .env.example .env
 `init-project.{ps1,sh}` runs `select-db-provider` (which trims to a single `docker/compose.yaml`) and writes a `.env` with a generated `JWT_SECRET_KEY` plus matching DB credentials. After bootstrap:
 
 ```bash
-docker compose up -d
+docker compose --project-directory . -f docker/compose.yaml up -d
 ```
 
 Pass `--no-env-file` (`-NoEnvFile` on PowerShell) to `init-project` if you want to manage `.env` yourself.
@@ -92,7 +94,7 @@ The container runs HTTP-only on port 8080. TLS is the reverse-proxy's job in pro
 
 - **TLS**: terminate at a reverse proxy (Caddy, Traefik, nginx). The container speaks HTTP only.
 - **Multi-replica**: set `Database__AutoMigrate=false` and run migrations as a one-shot job before scaling. The default `AutoMigrate=true` is convenient for single-replica deployments only.
-- **Image**: framework-dependent, runs as non-root UID 1000, healthcheck hits `/health/live`.
+- **Image**: framework-dependent, runs as the base image's pre-baked non-root `app` user, healthcheck hits `/health/live`.
 - **Secrets**: `.env` is gitignored. Pass production secrets via your orchestrator's secret store, not committed `.env` files.
 
 ## Features
