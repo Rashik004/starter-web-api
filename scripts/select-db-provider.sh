@@ -250,6 +250,30 @@ cd "$ROOT_DIR"
 resolve_prefix
 PREFIX_LOWER="$(echo "$PREFIX" | tr '[:upper:]' '[:lower:]')"
 
+# Idempotency guard: if only one migration project remains, the repo is
+# already trimmed. Re-running would silently rewrite DataExtensions.cs from
+# template, blowing away any manual edits. Require --force to proceed.
+MIGRATIONS_DIR="$ROOT_DIR/src/Migrations"
+if [[ -d "$MIGRATIONS_DIR" ]]; then
+    existing=()
+    shopt -s nullglob
+    for d in "$MIGRATIONS_DIR/$PREFIX.Data.Migrations."*/; do
+        [[ -d "$d" ]] && existing+=("$d")
+    done
+    shopt -u nullglob
+    if [[ ${#existing[@]} -le 1 ]] && ! $FORCE && ! $DRY_RUN; then
+        if [[ ${#existing[@]} -eq 1 ]]; then
+            kept="$(basename "${existing[0]%/}")"
+            kept="${kept#"$PREFIX.Data.Migrations."}"
+        else
+            kept="(none)"
+        fi
+        echo "Repo appears already trimmed to $kept (${#existing[@]} migration project(s) found)." >&2
+        echo "Pass --force to re-run anyway, or --dry-run to see what would change." >&2
+        exit 1
+    fi
+fi
+
 if ! $FORCE && ! $DRY_RUN; then
     dirty="$(git status --porcelain 2>/dev/null || true)"
     if [[ -n "$dirty" ]]; then

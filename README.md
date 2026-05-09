@@ -77,35 +77,68 @@ No `global.json` is included -- the project builds with any .NET 10+ SDK.
 
 ## Quick Start
 
-```bash
-# Clone the repository
-git clone <repo-url> && cd web-api
-
-# Set the JWT signing key (required)
-dotnet user-secrets set "Jwt:SecretKey" "your-256-bit-secret-key-here-min-32-chars" \
-  --project src/Starter.WebApi
-
-# Run the application
-dotnet run --project src/Starter.WebApi
-```
-
-The application starts at `https://localhost:5101` (HTTPS) or `http://localhost:5100` (HTTP).
-
-Visit the interactive API documentation at `https://localhost:5101/scalar/v1` (v2 also available at `/scalar/v2`).
-
-The SQLite database (`starter.db`) is created and migrated automatically on first run -- no database setup required.
-
-## Rename the Project
-
-This is a template repository. After cloning, rename the `Starter` prefix to your own project name (e.g., `Acme`) using the provided script. It updates all namespaces, project references, folder names, file names, configuration values, and scripts in one command.
+This is a template repository. The fastest path from clone to running app is the bootstrap script -- it renames the project, trims to a single database provider, and provisions a JWT signing key in one command.
 
 **PowerShell (Windows):**
 
 ```powershell
-./scripts/rename-project.ps1 -NewPrefix Acme
+./scripts/init-project.ps1 -NewPrefix Acme -Provider Sqlite
 ```
 
 **Bash (Linux/macOS):**
+
+```bash
+./scripts/init-project.sh --prefix Acme --provider Sqlite
+```
+
+That's it. After the script completes:
+
+```bash
+dotnet run --project src/Host/Acme.WebApi
+```
+
+The application starts at `https://localhost:5101` (HTTPS) or `http://localhost:5100` (HTTP). The interactive API documentation lives at `https://localhost:5101/scalar/v1` (v2 also available at `/scalar/v2`). The SQLite database (`acme.db`) is created and migrated automatically on first run.
+
+If you skip the bootstrap and want to run the unrenamed template directly, you must set the JWT signing key manually first (otherwise the app fails `ValidateOnStart`):
+
+```bash
+dotnet user-secrets set "Jwt:SecretKey" "your-256-bit-secret-key-here-min-32-chars" \
+  --project src/Host/Starter.WebApi
+dotnet run --project src/Host/Starter.WebApi
+```
+
+## Bootstrap Script
+
+`init-project` is a thin orchestrator that runs three steps in order:
+
+1. **Rename** -- replaces the `Starter` prefix with your chosen prefix throughout namespaces, folders, files, project references, configuration values, and scripts.
+2. **DB trim** -- removes the two unused migration projects, drops their EF Core packages, rewrites `DataExtensions.cs` and `DatabaseOptions.cs` for the chosen provider, and cleans `appsettings.json` connection strings.
+3. **JWT key** -- generates a 48-byte base64 secret and stores it via `dotnet user-secrets`. Skip with `-NoJwtSecret` / `--no-jwt-secret`.
+
+**Common options:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `-NewPrefix` / `--prefix` | New prefix (must be a valid C# identifier or dotted namespace, e.g. `Acme` or `Acme.Server`). Prompted if omitted. |
+| `-Provider` / `--provider` | DB provider to keep: `Sqlite`, `SqlServer`, or `PostgreSql`. Prompted if omitted (default: `Sqlite`). |
+| `-OldPrefix` / `--old-prefix` | Existing prefix to replace (default: `Starter`). |
+| `-Force` / `--force` | Skip the dirty-tree pushback prompt. |
+| `-SkipBuild` / `--skip-build` | Skip the verification build at each step. |
+| `-NoBackupBranch` / `--no-backup-branch` | Skip the pre-trim git backup branch. |
+| `-NoJwtSecret` / `--no-jwt-secret` | Don't auto-generate the JWT signing key (for CI). |
+| `-IncludeBootstrapScripts` / `--include-bootstrap-scripts` | Rewrite the bootstrap scripts themselves. Default: skip them so the template stays reusable. |
+
+After the script completes, review the staged diff with `git diff --cached` and commit when ready.
+
+## Manual Flow (advanced)
+
+If you want explicit control over each step, the underlying scripts run independently.
+
+### Rename only
+
+```powershell
+./scripts/rename-project.ps1 -NewPrefix Acme
+```
 
 ```bash
 ./scripts/rename-project.sh Acme
@@ -120,25 +153,22 @@ The script will:
 
 After the rename, delete the old SQLite database if it exists (`starter.db`) and reopen your IDE to refresh caches.
 
-**Options:**
+**Rename options:**
 
 | Parameter | Description |
 |-----------|-------------|
 | `-NewPrefix` / `$1` | New prefix name (required, must be a valid C# identifier) |
 | `-OldPrefix` / `$2` | Previous prefix to replace (default: `Starter`, useful for re-renaming) |
 | `-SkipBuild` / `--skip-build` | Skip the verification build after renaming |
+| `-IncludeBootstrapScripts` / `--include-bootstrap-scripts` | Rewrite the bootstrap scripts themselves (default: leave them so the template stays reusable) |
 
-## Select Database Provider
+### Trim DB provider only
 
-The project defaults to SQLite for zero-configuration development. If you need to standardize on SQL Server or PostgreSQL, use the database provider selection script to trim the solution down to a single provider. This removes the unused migration assemblies and updates all project references and configuration in one command.
-
-**PowerShell (Windows):**
+The project defaults to SQLite for zero-configuration development. To standardize on SQL Server or PostgreSQL, the trim script removes the unused migration assemblies and updates all project references and configuration in one command. Re-running on an already-trimmed repo aborts with a clear message; pass `-Force` / `--force` to override.
 
 ```powershell
 ./scripts/select-db-provider.ps1 -Provider SqlServer
 ```
-
-**Bash (Linux/macOS):**
 
 ```bash
 ./scripts/select-db-provider.sh --provider SqlServer
@@ -147,32 +177,32 @@ The project defaults to SQLite for zero-configuration development. If you need t
 The script will:
 
 1. Create a backup git branch (unless `-NoBackupBranch` / `--no-backup-branch` is passed)
-2. Remove the two unused migration projects from `src/`
+2. Remove the two unused migration projects from `src/Migrations/`
 3. Update the `.slnx` solution file and host `.csproj`
-4. Remove unused EF Core packages from `Starter.Data.csproj`
+4. Remove unused EF Core packages from `<Prefix>.Data.csproj`
 5. Rewrite `DataExtensions.cs` with provider-specific configuration
 6. Rewrite `DatabaseOptions.cs` (removing `MaxRetryCount` for SQLite)
-7. Clean `appsettings.json` files (remove unused connection strings)
+7. Surgically clean `appsettings.json` files (preserves comments and formatting)
 8. Delete the SQLite `.db` file if switching away from SQLite
 9. Run a verification build to confirm everything compiles
 10. Stage all changes (no commit)
 
-**Options:**
+**Trim options:**
 
 | Parameter | Description |
 |-----------|-------------|
-| `-Provider` / `--provider` | Provider to keep: `Sqlite`, `SqlServer`, or `PostgreSql` (prompts if omitted) |
+| `-Provider` / `--provider` | Provider to keep: `Sqlite`, `SqlServer`, or `PostgreSql` (prompts if omitted, default `Sqlite`) |
 | `-Prefix` / `--prefix` | Project namespace prefix (auto-detected if omitted, required if multiple `.slnx` files) |
 | `-DryRun` / `--dry-run` | Print planned changes without mutating files |
 | `-NoBackupBranch` / `--no-backup-branch` | Skip the automatic pre-trim backup branch |
-| `-Force` / `--force` | Proceed even if git working tree is dirty |
+| `-Force` / `--force` | Proceed even if git working tree is dirty, or if repo is already trimmed |
 | `-SkipBuild` / `--skip-build` | Skip the verification build after trimming |
 
 **Example (interactive):**
 
 ```powershell
 ./scripts/select-db-provider.ps1
-# Select provider from menu
+# Select provider from menu (default: Sqlite)
 ```
 
 **Example (SQL Server with dry-run):**
@@ -227,7 +257,9 @@ web-api/
 |   |-- Starter.WebApi.Tests.Architecture/     # NetArchTest module isolation + removal smoke tests
 |
 |-- scripts/
+|   |-- init-project.sh / .ps1               # One-shot bootstrap: rename + DB trim + JWT secret
 |   |-- rename-project.sh / .ps1             # Rename project prefix (Starter -> YourName)
+|   |-- select-db-provider.sh / .ps1         # Trim solution to a single DB provider
 |   |-- add-migration.sh / .ps1              # EF Core migration helper
 |   |-- update-database.sh / .ps1            # Database update helper
 ```

@@ -252,6 +252,23 @@ try {
     $Prefix = Resolve-Prefix -RootDir $rootDir -Explicit $Prefix
     $prefixLower = $Prefix.ToLower()
 
+    # Idempotency guard: if only one migration project remains, the repo is
+    # already trimmed. Re-running would silently rewrite DataExtensions.cs from
+    # template, blowing away any manual edits. Require -Force to proceed.
+    $migrationsDir = Join-Path $rootDir 'src/Migrations'
+    if (Test-Path $migrationsDir) {
+        $existing = @(Get-ChildItem -Path $migrationsDir -Directory `
+            -Filter "$Prefix.Data.Migrations.*" -ErrorAction SilentlyContinue)
+        if ($existing.Count -le 1 -and -not $Force -and -not $DryRun) {
+            $kept = if ($existing.Count -eq 1) {
+                $existing[0].Name -replace "^$([regex]::Escape($Prefix))\.Data\.Migrations\.", ''
+            } else { '(none)' }
+            Write-Host "Repo appears already trimmed to $kept ($($existing.Count) migration project(s) found)." -ForegroundColor Yellow
+            Write-Host "Pass -Force to re-run anyway, or -DryRun to see what would change." -ForegroundColor Yellow
+            throw 'Aborted: idempotency guard.'
+        }
+    }
+
     if (-not $Force -and -not $DryRun) {
         $dirty = git status --porcelain
         if ($dirty) {
@@ -403,6 +420,10 @@ try {
     # 8. Edit appsettings files
     # -----------------------------------------------------------------------
 
+    # Surgical line removal (preserves comments + formatting).
+    # Each needle matches exactly the assignment line for a JSON key. Comments
+    # mentioning these keys in unquoted prose are not affected because the
+    # needle includes the quoted-key + colon prefix.
     $appsettingsFiles = @(
         "src/Host/$Prefix.WebApi/appsettings.json"
         "src/Host/$Prefix.WebApi/appsettings.Development.json"
@@ -413,27 +434,34 @@ try {
         Write-Step 'EDIT' $path
         if ($DryRun) { continue }
 
-        $raw = Get-Content $path -Raw
-        # Strip // comments outside strings (PS <7.3 has no -AllowComments)
-        $stripped = [regex]::Replace(
-            $raw,
-            '("(?:\\.|[^"\\])*")|//[^\r\n]*',
-            { param($m) if ($m.Groups[1].Success) { $m.Groups[1].Value } else { '' } })
-        # Strip trailing commas before } or ]
-        $stripped = [regex]::Replace($stripped, ',(\s*[}\]])', '$1')
-        $json = $stripped | ConvertFrom-Json -AsHashtable
+        $needles = New-Object System.Collections.Generic.List[string]
+        # Remove Database:Provider line.
+        $needles.Add('"Provider":')
+        # Remove MaxRetryCount when keeping SQLite (Sqlite ignores it).
+        if ($Provider -eq 'Sqlite') { $needles.Add('"MaxRetryCount":') }
+        # Remove dropped providers from ConnectionStrings.
+        foreach ($d in $drop) { $needles.Add("`"$d`":") }
 
-        if ($json.ContainsKey('Database')) {
-            $json['Database'].Remove('Provider') | Out-Null
-            if ($Provider -eq 'Sqlite') { $json['Database'].Remove('MaxRetryCount') | Out-Null }
+        $lines = [System.IO.File]::ReadAllLines($path)
+        $kept = $lines | Where-Object {
+            $line = $_
+            $remove = $false
+            foreach ($n in $needles) { if ($line -like "*$n*") { $remove = $true; break } }
+            -not $remove
         }
-        if ($json.ContainsKey('ConnectionStrings')) {
-            foreach ($d in $drop) { $json['ConnectionStrings'].Remove($d) | Out-Null }
-            if ($json['ConnectionStrings'].Count -eq 0) { $json.Remove('ConnectionStrings') | Out-Null }
+        # Tidy: a line ending in `,` immediately followed by `}` or `]` would
+        # become a JSON syntax error after removing the next key. Strip the
+        # trailing comma on the last property line of any object/array.
+        $tidied = [System.Collections.Generic.List[string]]::new()
+        for ($i = 0; $i -lt $kept.Count; $i++) {
+            $cur = $kept[$i]
+            $nxt = if ($i + 1 -lt $kept.Count) { $kept[$i + 1].TrimStart() } else { '' }
+            if ($cur -match '^(.*?)(,)(\s*)$' -and ($nxt.StartsWith('}') -or $nxt.StartsWith(']'))) {
+                $cur = $Matches[1] + $Matches[3]
+            }
+            $tidied.Add($cur)
         }
-
-        $out = $json | ConvertTo-Json -Depth 32
-        Set-Content -Path $path -Value $out -Encoding UTF8
+        [System.IO.File]::WriteAllLines($path, $tidied, [System.Text.UTF8Encoding]::new($false))
     }
 
     # -----------------------------------------------------------------------
