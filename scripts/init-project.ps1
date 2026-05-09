@@ -246,7 +246,7 @@ if (-not $NoEnvFile) {
                     (Pick-Char 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
                     (Pick-Char 'abcdefghijklmnopqrstuvwxyz')
                     (Pick-Char '0123456789')
-                    (Pick-Char '!@#%^*-_+=')
+                    (Pick-Char '!@%^*-_+=')
                 )
                 $saPwd = $basePwd
                 foreach ($c in $extras) {

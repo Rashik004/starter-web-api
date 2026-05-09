@@ -459,7 +459,7 @@ KEEP_FILENAME="${PROVIDER_TO_FILE[$PROVIDER]}"
 KEEP_PATH="$COMPOSE_DIR/$KEEP_FILENAME"
 FINAL_PATH="$COMPOSE_DIR/compose.yaml"
 
-git_tracked() { git -C "$ROOT_DIR" ls-files --error-unmatch "$1" >/dev/null 2>&1; }
+git_tracked() { git -C "$ROOT_DIR" ls-files --error-unmatch -- "${1#$ROOT_DIR/}" >/dev/null 2>&1; }
 
 if [[ ! -d "$COMPOSE_DIR" ]]; then
     tag SKIP "docker/ directory absent — skipping compose trim"
@@ -491,7 +491,7 @@ else
             tag DELETE "$shard"
             if ! $DRY_RUN; then
                 if git_tracked "$shard"; then
-                    git -C "$ROOT_DIR" rm "$shard"
+                    git -C "$ROOT_DIR" rm -- "${shard#$ROOT_DIR/}"
                 else
                     rm -f "$shard"
                 fi
@@ -504,7 +504,7 @@ else
         tag EDIT "$KEEP_PATH -> $FINAL_PATH"
         if ! $DRY_RUN; then
             if git_tracked "$KEEP_PATH"; then
-                git -C "$ROOT_DIR" mv "$KEEP_PATH" "$FINAL_PATH"
+                git -C "$ROOT_DIR" mv -- "${KEEP_PATH#$ROOT_DIR/}" "${FINAL_PATH#$ROOT_DIR/}"
             else
                 mv -f "$KEEP_PATH" "$FINAL_PATH"
             fi

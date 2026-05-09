@@ -493,21 +493,19 @@ try {
     $keepPath     = Join-Path $composeDir $keepFilename
     $finalPath    = Join-Path $composeDir 'compose.yaml'
 
+    function Get-RepoRelativePath {
+        param([string]$Path)
+        $rootFull = [System.IO.Path]::GetFullPath($rootDir)
+        $pathFull = [System.IO.Path]::GetFullPath($Path)
+        if ($pathFull.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
+            return ($pathFull.Substring($rootFull.Length).TrimStart('\', '/')) -replace '\\', '/'
+        }
+        return ($Path -replace '\\', '/')
+    }
+
     function Test-GitTracked {
         param([string]$Path)
-
-        $gitPath = $Path
-        if ([System.IO.Path]::IsPathRooted($Path)) {
-            $rootFull = [System.IO.Path]::GetFullPath($rootDir)
-            $pathFull = [System.IO.Path]::GetFullPath($Path)
-
-            if ($pathFull.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
-                $gitPath = $pathFull.Substring($rootFull.Length).TrimStart('\', '/')
-            }
-        }
-
-        $gitPath = $gitPath -replace '\\', '/'
-        git -C $rootDir ls-files --error-unmatch -- $gitPath 2>$null | Out-Null
+        git -C $rootDir ls-files --error-unmatch -- (Get-RepoRelativePath $Path) 2>$null | Out-Null
         return $LASTEXITCODE -eq 0
     }
 
@@ -540,7 +538,7 @@ try {
                 Write-Step 'DELETE' $shard.FullName 'Red'
                 if (-not $DryRun) {
                     if (Test-GitTracked -Path $shard.FullName) {
-                        git -C $rootDir rm $shard.FullName
+                        git -C $rootDir rm -- (Get-RepoRelativePath $shard.FullName)
                     } else {
                         Remove-Item -Force $shard.FullName
                     }
@@ -552,7 +550,7 @@ try {
             Write-Step 'EDIT' "$keepPath -> $finalPath"
             if (-not $DryRun) {
                 if (Test-GitTracked -Path $keepPath) {
-                    git -C $rootDir mv $keepPath $finalPath
+                    git -C $rootDir mv -- (Get-RepoRelativePath $keepPath) (Get-RepoRelativePath $finalPath)
                 } else {
                     Move-Item -Force $keepPath $finalPath
                 }
