@@ -28,6 +28,9 @@
     Skip auto-generation of the Jwt:SecretKey user-secret. Default: generate a
     48-byte base64 key and store it via 'dotnet user-secrets'. Pass this for
     CI/automated bootstraps where the secret is supplied separately.
+.PARAMETER NoEnvFile
+    Skip generation of the .env file at the repo root. Default: write .env
+    with JWT_SECRET_KEY and provider-specific DB credentials for Docker Compose.
 .EXAMPLE
     ./scripts/init-project.ps1 -NewPrefix Acme -Provider Sqlite
 .EXAMPLE
@@ -44,7 +47,8 @@ param(
     [switch]$SkipBuild,
     [switch]$NoBackupBranch,
     [switch]$IncludeBootstrapScripts,
-    [switch]$NoJwtSecret
+    [switch]$NoJwtSecret,
+    [switch]$NoEnvFile
 )
 
 $ErrorActionPreference = 'Stop'
@@ -122,11 +126,15 @@ Write-Host "  SkipBuild:     $SkipBuild"
 Write-Host "  Backup br.:    $(-not $NoBackupBranch)"
 Write-Host "  Skip bootstr.: $skipBootstrap"
 Write-Host "  JWT secret:    $(if ($NoJwtSecret) { 'skipped' } else { 'auto-generate' })"
+Write-Host "  .env file:     $(if ($NoEnvFile) { 'skipped' } else { 'write at repo root' })"
 Write-Host ""
-Write-Host "  Step 1/3: scripts/rename-project.ps1"
-Write-Host "  Step 2/3: scripts/select-db-provider.ps1 (with -Force, since rename leaves tree dirty)"
+Write-Host "  Step 1/4: scripts/rename-project.ps1"
+Write-Host "  Step 2/4: scripts/select-db-provider.ps1 (with -Force, since rename leaves tree dirty)"
 if (-not $NoJwtSecret) {
-    Write-Host "  Step 3/3: dotnet user-secrets set Jwt:SecretKey (auto-generated)"
+    Write-Host "  Step 3/4: dotnet user-secrets set Jwt:SecretKey (auto-generated)"
+}
+if (-not $NoEnvFile) {
+    Write-Host "  Step 4/4: Write .env file for Docker (skip with -NoEnvFile)"
 }
 Write-Host ""
 
@@ -137,7 +145,7 @@ if (-not $Force) {
 # ── Phase 4: Rename ────────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host ">>> [1/3] Running rename-project.ps1..." -ForegroundColor Green
+Write-Host ">>> [1/4] Running rename-project.ps1..." -ForegroundColor Green
 Write-Host ""
 
 $renameArgs = @{
@@ -155,7 +163,7 @@ if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
 # ── Phase 5: DB trim ───────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host ">>> [2/3] Running select-db-provider.ps1..." -ForegroundColor Green
+Write-Host ">>> [2/4] Running select-db-provider.ps1..." -ForegroundColor Green
 Write-Host ""
 
 $trimArgs = @{
@@ -175,7 +183,7 @@ if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
 
 if (-not $NoJwtSecret) {
     Write-Host ""
-    Write-Host ">>> [3/3] Generating JWT signing key..." -ForegroundColor Green
+    Write-Host ">>> [3/4] Generating JWT signing key..." -ForegroundColor Green
     Write-Host ""
 
     $hostCsproj = Join-Path $rootDir "src/Host/$NewPrefix.WebApi/$NewPrefix.WebApi.csproj"
@@ -195,7 +203,100 @@ if (-not $NoJwtSecret) {
     }
 }
 
-# ── Phase 7: Done ──────────────────────────────────────────────────────────
+# ── Phase 7: Write .env file (Docker) ─────────────────────────────────────
+
+$envWritten = $false
+if (-not $NoEnvFile) {
+    Write-Host ""
+    Write-Host ">>> [4/4] Writing .env file..." -ForegroundColor Green
+    Write-Host ""
+
+    $envPath = Join-Path $rootDir '.env'
+    if (Test-Path $envPath) {
+        Write-Host "WARNING: Skipping .env: file already exists at $envPath" -ForegroundColor Yellow
+    } else {
+        # Generate a fresh JWT secret for .env; user-secrets (Phase 6) and Docker are
+        # separate environments, so using independent keys is intentional.
+        $envJwtBytes = [System.Security.Cryptography.RandomNumberGenerator]::GetBytes(48)
+        $envJwtSecret = [Convert]::ToBase64String($envJwtBytes)
+
+        $lines = @(
+            "JWT_SECRET_KEY=$envJwtSecret",
+            "CORS_ORIGIN=http://localhost:8080"
+        )
+
+        switch ($Provider) {
+            'PostgreSql' {
+                $pgPwd = [Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(24))
+                $lines += "POSTGRES_USER=starter"
+                $lines += "POSTGRES_PASSWORD=$pgPwd"
+                $lines += "POSTGRES_DB=starterdb"
+            }
+            'SqlServer' {
+                # SQL Server requires 8+ chars with 3 of 4 categories (upper/lower/digit/symbol).
+                # Inject one char from each required category at random positions in a 24-byte
+                # base64 string. Avoids the predictable "Aa1!" prefix while preserving entropy.
+                $basePwd = [Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(24)).TrimEnd('=')
+                $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+                function Pick-Char([string]$set) {
+                    $idx = [System.Security.Cryptography.RandomNumberGenerator]::GetInt32($set.Length)
+                    return $set[$idx]
+                }
+                $extras = @(
+                    (Pick-Char 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+                    (Pick-Char 'abcdefghijklmnopqrstuvwxyz')
+                    (Pick-Char '0123456789')
+                    (Pick-Char '!@%^*-_+=')
+                )
+                $saPwd = $basePwd
+                foreach ($c in $extras) {
+                    $pos = [System.Security.Cryptography.RandomNumberGenerator]::GetInt32($saPwd.Length + 1)
+                    $saPwd = $saPwd.Insert($pos, [string]$c)
+                }
+                $rng.Dispose()
+                $lines += "MSSQL_SA_PASSWORD=$saPwd"
+            }
+            # Sqlite: no extra keys needed.
+        }
+
+        # Atomic create with FileShare.None so a racing writer fails loudly. Use
+        # FileMode.CreateNew so an existing .env is never silently overwritten
+        # (matches the bash `set -C` guard).
+        $stream = [System.IO.File]::Open($envPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+        try {
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes(($lines -join "`n") + "`n")
+            $stream.Write($bytes, 0, $bytes.Length)
+        } finally {
+            $stream.Dispose()
+        }
+
+        # Restrict ACL: current user gets full control, all inherited rules removed.
+        # Mirrors the bash `chmod 600` so secrets are not readable by other local accounts.
+        # On non-Windows PowerShell, Set-Acl on file ACLs is a no-op; print a warning.
+        if ($IsWindows -or $PSVersionTable.PSVersion.Major -le 5) {
+            try {
+                $acl = New-Object System.Security.AccessControl.FileSecurity
+                $acl.SetAccessRuleProtection($true, $false)  # disable inheritance, drop inherited rules
+                $userSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
+                $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+                    $userSid,
+                    [System.Security.AccessControl.FileSystemRights]::FullControl,
+                    [System.Security.AccessControl.AccessControlType]::Allow)
+                $acl.AddAccessRule($rule)
+                Set-Acl -Path $envPath -AclObject $acl
+            } catch {
+                Write-Host "WARNING: Could not harden .env ACL: $($_.Exception.Message). Restrict permissions manually." -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "WARNING: PowerShell on this OS cannot harden .env ACL. Run: chmod 600 .env" -ForegroundColor Yellow
+        }
+
+        Write-Host "Wrote .env (gitignored). Run: docker compose --project-directory . -f docker/compose.yaml up"
+        $envWritten = $true
+    }
+}
+
+# ── Phase 8: Done ──────────────────────────────────────────────────────────
 
 Write-Host ""
 Write-Host "=== init-project complete ===" -ForegroundColor Green
@@ -203,6 +304,9 @@ Write-Host "  Renamed:  $OldPrefix -> $NewPrefix"
 Write-Host "  Provider: $Provider"
 if (-not $NoJwtSecret) {
     Write-Host "  JWT key:  set in user-secrets"
+}
+if ($envWritten) {
+    Write-Host "  .env:     written at repo root"
 }
 Write-Host ""
 Write-Host "Next:" -ForegroundColor Yellow

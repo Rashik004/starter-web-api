@@ -136,7 +136,7 @@ Write-Host ""
 
 Write-Host "[Phase 2] Replacing file contents..." -ForegroundColor Cyan
 
-$includeExtensions = @('*.cs', '*.csproj', '*.slnx', '*.json', '*.ps1', '*.sh', '*.md')
+$includeExtensions = @('*.cs', '*.csproj', '*.slnx', '*.json', '*.ps1', '*.sh', '*.md', '*.yaml', '*.yml', 'Dockerfile')
 $excludeDirs = @('.git', 'bin', 'obj', '.vs', '.planning', '.claude')
 
 $filesModified = 0

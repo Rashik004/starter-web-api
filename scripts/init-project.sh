@@ -3,6 +3,7 @@
 #                                  [--provider Sqlite|SqlServer|PostgreSql]
 #                                  [--force] [--skip-build] [--no-backup-branch]
 #                                  [--include-bootstrap-scripts] [--no-jwt-secret]
+#                                  [--no-env-file]
 # Example: ./scripts/init-project.sh --prefix Acme --provider Sqlite
 # Example: ./scripts/init-project.sh --prefix Acme --old-prefix Starter --provider PostgreSql --force
 # Example: ./scripts/init-project.sh
@@ -12,6 +13,8 @@
 #   2. Trims to a single DB provider (select-db-provider.sh).
 #   3. Generates a JWT signing key and stores it via 'dotnet user-secrets'
 #      (skip with --no-jwt-secret).
+#   4. Writes a .env file at the repo root for Docker Compose
+#      (skip with --no-env-file).
 #
 # After rename phase the working tree is necessarily dirty, so --force is
 # always forwarded to select-db-provider.sh.
@@ -35,9 +38,10 @@ SKIP_BUILD=false
 NO_BACKUP_BRANCH=false
 INCLUDE_BOOTSTRAP=false
 NO_JWT_SECRET=false
+NO_ENV_FILE=false
 
 usage() {
-    sed -n '2,21p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    sed -n '2,23p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
 }
 
 while [[ $# -gt 0 ]]; do
@@ -50,6 +54,7 @@ while [[ $# -gt 0 ]]; do
         --no-backup-branch)           NO_BACKUP_BRANCH=true; shift ;;
         --include-bootstrap-scripts)  INCLUDE_BOOTSTRAP=true; shift ;;
         --no-jwt-secret)              NO_JWT_SECRET=true; shift ;;
+        --no-env-file)                NO_ENV_FILE=true; shift ;;
         -h|--help)                    usage; exit 0 ;;
         *) echo "Unknown argument: $1" >&2; usage; exit 1 ;;
     esac
@@ -141,10 +146,12 @@ echo "  SkipBuild:     $SKIP_BUILD"
 echo "  Backup br.:    $(! $NO_BACKUP_BRANCH && echo true || echo false)"
 echo "  Skip bootstr.: $SKIP_BOOTSTRAP"
 echo "  JWT secret:    $(! $NO_JWT_SECRET && echo "auto-generate" || echo "skipped")"
+echo "  .env file:     $($NO_ENV_FILE && echo "skipped" || echo "write at repo root")"
 echo ""
-echo "  Step 1/3: scripts/rename-project.sh"
-echo "  Step 2/3: scripts/select-db-provider.sh (with --force, since rename leaves tree dirty)"
-$NO_JWT_SECRET || echo "  Step 3/3: dotnet user-secrets set Jwt:SecretKey (auto-generated)"
+echo "  Step 1/4: scripts/rename-project.sh"
+echo "  Step 2/4: scripts/select-db-provider.sh (with --force, since rename leaves tree dirty)"
+$NO_JWT_SECRET || echo "  Step 3/4: dotnet user-secrets set Jwt:SecretKey (auto-generated)"
+$NO_ENV_FILE   || echo "  Step 4/4: Write .env file for Docker (skip with --no-env-file)"
 echo ""
 
 if ! $FORCE; then
@@ -154,7 +161,7 @@ fi
 # ── Phase 4: Rename ────────────────────────────────────────────────────────
 
 echo ""
-echo ">>> [1/3] Running rename-project.sh..."
+echo ">>> [1/4] Running rename-project.sh..."
 echo ""
 
 rename_args=("$NEW_PREFIX" "$OLD_PREFIX")
@@ -170,7 +177,7 @@ bash "$SCRIPT_DIR/rename-project.sh" "${rename_args[@]}"
 # ── Phase 5: DB trim ───────────────────────────────────────────────────────
 
 echo ""
-echo ">>> [2/3] Running select-db-provider.sh..."
+echo ">>> [2/4] Running select-db-provider.sh..."
 echo ""
 
 trim_args=(--provider "$PROVIDER" --prefix "$NEW_PREFIX" --force)
@@ -183,7 +190,7 @@ bash "$SCRIPT_DIR/select-db-provider.sh" "${trim_args[@]}"
 
 if ! $NO_JWT_SECRET; then
     echo ""
-    echo ">>> [3/3] Generating JWT signing key..."
+    echo ">>> [3/4] Generating JWT signing key..."
     echo ""
 
     HOST_CSPROJ="$ROOT_DIR/src/Host/$NEW_PREFIX.WebApi/$NEW_PREFIX.WebApi.csproj"
@@ -206,13 +213,97 @@ if ! $NO_JWT_SECRET; then
     fi
 fi
 
-# ── Phase 7: Done ──────────────────────────────────────────────────────────
+# ── Phase 7: Write .env file (Docker) ─────────────────────────────────────
+
+ENV_WRITTEN=false
+if ! $NO_ENV_FILE; then
+    echo ""
+    echo ">>> [4/4] Writing .env file..."
+    echo ""
+
+    ENV_PATH="$ROOT_DIR/.env"
+    if [[ -f "$ENV_PATH" ]]; then
+        echo "WARNING: Skipping .env: file already exists at $ENV_PATH"
+    else
+        # Restrictive umask so the secret file is never world/group-readable
+        # between create and chmod. set -C makes the redirect atomic-fail if
+        # another process raced us to create the file.
+        ( umask 077 && set -C && : > "$ENV_PATH" ) || {
+            echo "ERROR: Could not create $ENV_PATH (file already exists or permission denied)" >&2
+            exit 1
+        }
+
+        # Generate a fresh JWT secret for .env; user-secrets (Phase 6) and Docker are
+        # separate environments, so using independent keys is intentional.
+        if command -v openssl >/dev/null 2>&1; then
+            env_jwt="$(openssl rand -base64 48 | tr -d '\n')"
+        else
+            if [[ ! -r /dev/urandom ]]; then
+                echo "ERROR: No entropy source available (openssl missing and /dev/urandom unreadable)" >&2
+                rm -f "$ENV_PATH"
+                exit 1
+            fi
+            env_jwt="$(head -c 48 /dev/urandom | base64 | tr -d '\n')"
+        fi
+
+        {
+            printf 'JWT_SECRET_KEY=%s\n' "$env_jwt"
+            printf 'CORS_ORIGIN=http://localhost:8080\n'
+        } >> "$ENV_PATH"
+
+        case "$PROVIDER" in
+            PostgreSql)
+                if command -v openssl >/dev/null 2>&1; then
+                    pg_pwd="$(openssl rand -base64 24 | tr -d '\n')"
+                else
+                    pg_pwd="$(head -c 24 /dev/urandom | base64 | tr -d '\n')"
+                fi
+                printf 'POSTGRES_USER=starter\n'      >> "$ENV_PATH"
+                printf 'POSTGRES_PASSWORD=%s\n' "$pg_pwd" >> "$ENV_PATH"
+                printf 'POSTGRES_DB=starterdb\n'      >> "$ENV_PATH"
+                ;;
+            SqlServer)
+                # SQL Server requires 8+ chars with 3 of 4 categories (upper/lower/digit/symbol).
+                # Generate ~32 random base64 chars, then inject one of each required category
+                # at randomized positions so entropy is preserved without a predictable prefix.
+                if command -v openssl >/dev/null 2>&1; then
+                    base_pwd="$(openssl rand -base64 24 | tr -d '\n=')"
+                else
+                    base_pwd="$(head -c 24 /dev/urandom | base64 | tr -d '\n=')"
+                fi
+                # Pick one char from each required category (RANDOM is 0..32767 => mod is fine for small alphabets).
+                upper_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                lower_chars='abcdefghijklmnopqrstuvwxyz'
+                digit_chars='0123456789'
+                # Exclude '#' because Docker Compose .env parsing may treat it as a comment delimiter.
+                symbol_chars='!@%^*-_+='
+                pick() { local s="$1"; printf '%s' "${s:$((RANDOM % ${#s})):1}"; }
+                extras="$(pick "$upper_chars")$(pick "$lower_chars")$(pick "$digit_chars")$(pick "$symbol_chars")"
+                # Insert each extra char at a random position in base_pwd (Fisher-Yates-ish).
+                sa_pwd="$base_pwd"
+                for i in 0 1 2 3; do
+                    pos=$((RANDOM % (${#sa_pwd} + 1)))
+                    sa_pwd="${sa_pwd:0:$pos}${extras:$i:1}${sa_pwd:$pos}"
+                done
+                printf 'MSSQL_SA_PASSWORD=%s\n' "$sa_pwd" >> "$ENV_PATH"
+                ;;
+            # Sqlite: no extra keys needed.
+        esac
+
+        chmod 600 "$ENV_PATH"
+        echo "Wrote .env (gitignored). Run: docker compose --project-directory . -f docker/compose.yaml up"
+        ENV_WRITTEN=true
+    fi
+fi
+
+# ── Phase 8: Done ──────────────────────────────────────────────────────────
 
 echo ""
 echo "=== init-project complete ==="
 echo "  Renamed:  $OLD_PREFIX -> $NEW_PREFIX"
 echo "  Provider: $PROVIDER"
 $NO_JWT_SECRET || echo "  JWT key:  set in user-secrets"
+$ENV_WRITTEN   && echo "  .env:     written at repo root"
 echo ""
 echo "Next:"
 echo "  - Review staged diff: git diff --cached"

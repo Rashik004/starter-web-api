@@ -480,6 +480,85 @@ try {
     }
 
     # -----------------------------------------------------------------------
+    # 9b. Trim Docker compose files
+    # -----------------------------------------------------------------------
+
+    $composeDir = Join-Path $rootDir 'docker'
+    $providerToFile = @{
+        'Sqlite'     = 'compose.sqlite.yaml'
+        'PostgreSql' = 'compose.postgres.yaml'
+        'SqlServer'  = 'compose.sqlserver.yaml'
+    }
+    $keepFilename = $providerToFile[$Provider]
+    $keepPath     = Join-Path $composeDir $keepFilename
+    $finalPath    = Join-Path $composeDir 'compose.yaml'
+
+    function Get-RepoRelativePath {
+        param([string]$Path)
+        $rootFull = [System.IO.Path]::GetFullPath($rootDir)
+        $pathFull = [System.IO.Path]::GetFullPath($Path)
+        if ($pathFull.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
+            return ($pathFull.Substring($rootFull.Length).TrimStart('\', '/')) -replace '\\', '/'
+        }
+        return ($Path -replace '\\', '/')
+    }
+
+    function Test-GitTracked {
+        param([string]$Path)
+        git -C $rootDir ls-files --error-unmatch -- (Get-RepoRelativePath $Path) 2>$null | Out-Null
+        return $LASTEXITCODE -eq 0
+    }
+
+    if (-not (Test-Path $composeDir)) {
+        Write-Step 'SKIP' "docker/ directory absent — skipping compose trim" 'DarkGray'
+    } elseif (-not (Test-Path $keepPath)) {
+        # Check idempotency: if compose.yaml exists and no shards remain, already trimmed
+        $shards = @(Get-ChildItem -Path $composeDir -Filter 'compose.*.yaml' -File -ErrorAction SilentlyContinue)
+        if ((Test-Path $finalPath) -and $shards.Count -eq 0) {
+            # Verify the existing compose.yaml's Database__Provider matches the requested
+            # provider. Otherwise we'd silently leave compose pointing at the OLD provider
+            # while the .NET code is switched to the NEW one — broken stack with no error.
+            $composeContent = Get-Content -Path $finalPath -Raw -ErrorAction SilentlyContinue
+            $existingProvider = $null
+            if ($composeContent -match 'Database__Provider:\s*([A-Za-z]+)') {
+                $existingProvider = $Matches[1]
+            }
+            if ($existingProvider -and $existingProvider -ne $Provider) {
+                throw "Provider mismatch: docker/compose.yaml is already trimmed to '$existingProvider' but you requested '$Provider'. The .NET code WAS switched, but compose.yaml would silently launch the wrong DB. To recover: 'git restore docker/' to bring back the shards, then re-run."
+            }
+            Write-Step 'SKIP' "compose files already trimmed — skipping" 'DarkGray'
+        } else {
+            Write-Step 'WARN' "kept compose file '$keepFilename' missing — leaving compose dir untouched" 'Yellow'
+        }
+    } else {
+        # Delete unused compose shards
+        $shards = @(Get-ChildItem -Path $composeDir -Filter 'compose.*.yaml' -File -ErrorAction SilentlyContinue)
+        foreach ($shard in $shards) {
+            if ($shard.FullName -ne $keepPath) {
+                Write-Step 'DELETE' $shard.FullName 'Red'
+                if (-not $DryRun) {
+                    if (Test-GitTracked -Path $shard.FullName) {
+                        git -C $rootDir rm -- (Get-RepoRelativePath $shard.FullName)
+                    } else {
+                        Remove-Item -Force $shard.FullName
+                    }
+                }
+            }
+        }
+        # Rename kept shard → compose.yaml (skip if already at final path)
+        if ($keepPath -ne $finalPath) {
+            Write-Step 'EDIT' "$keepPath -> $finalPath"
+            if (-not $DryRun) {
+                if (Test-GitTracked -Path $keepPath) {
+                    git -C $rootDir mv -- (Get-RepoRelativePath $keepPath) (Get-RepoRelativePath $finalPath)
+                } else {
+                    Move-Item -Force $keepPath $finalPath
+                }
+            }
+        }
+    }
+
+    # -----------------------------------------------------------------------
     # 10. Warn about architecture tests
     # -----------------------------------------------------------------------
 
