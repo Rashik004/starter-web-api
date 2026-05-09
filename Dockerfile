@@ -20,11 +20,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends wget \
     && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -g 1000 appuser && useradd -u 1000 -g appuser -m appuser
+RUN mkdir -p /data && chown -R app:app /app /data
 
-RUN mkdir -p /data && chown -R appuser:appuser /app /data
-
-USER appuser
+USER app
 
 ENV ASPNETCORE_URLS=http://+:8080 \
     ASPNETCORE_ENVIRONMENT=Production \
