@@ -291,7 +291,7 @@ if ! $NO_ENV_FILE; then
         esac
 
         chmod 600 "$ENV_PATH"
-        echo "Wrote .env (gitignored). Run: docker compose up"
+        echo "Wrote .env (gitignored). Run: docker compose --project-directory . -f docker/compose.yaml up"
         ENV_WRITTEN=true
     fi
 fi
