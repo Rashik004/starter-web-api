@@ -275,7 +275,8 @@ if ! $NO_ENV_FILE; then
                 upper_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
                 lower_chars='abcdefghijklmnopqrstuvwxyz'
                 digit_chars='0123456789'
-                symbol_chars='!@#%^*-_+='
+                # Exclude '#' because Docker Compose .env parsing may treat it as a comment delimiter.
+                symbol_chars='!@%^*-_+='
                 pick() { local s="$1"; printf '%s' "${s:$((RANDOM % ${#s})):1}"; }
                 extras="$(pick "$upper_chars")$(pick "$lower_chars")$(pick "$digit_chars")$(pick "$symbol_chars")"
                 # Insert each extra char at a random position in base_pwd (Fisher-Yates-ish).
