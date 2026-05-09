@@ -495,7 +495,19 @@ try {
 
     function Test-GitTracked {
         param([string]$Path)
-        git -C $rootDir ls-files --error-unmatch $Path 2>$null | Out-Null
+
+        $gitPath = $Path
+        if ([System.IO.Path]::IsPathRooted($Path)) {
+            $rootFull = [System.IO.Path]::GetFullPath($rootDir)
+            $pathFull = [System.IO.Path]::GetFullPath($Path)
+
+            if ($pathFull.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
+                $gitPath = $pathFull.Substring($rootFull.Length).TrimStart('\', '/')
+            }
+        }
+
+        $gitPath = $gitPath -replace '\\', '/'
+        git -C $rootDir ls-files --error-unmatch -- $gitPath 2>$null | Out-Null
         return $LASTEXITCODE -eq 0
     }
 
