@@ -469,6 +469,16 @@ elif [[ ! -f "$KEEP_PATH" ]]; then
     _shards=("$COMPOSE_DIR"/compose.*.yaml)
     shopt -u nullglob
     if [[ -f "$FINAL_PATH" && ${#_shards[@]} -eq 0 ]]; then
+        # Verify the existing compose.yaml's Database__Provider matches the requested
+        # provider. Otherwise we'd silently leave compose pointing at the OLD provider
+        # while the .NET code is switched to the NEW one — broken stack with no error.
+        existing_provider="$(grep -oE 'Database__Provider:[[:space:]]*[A-Za-z]+' "$FINAL_PATH" | head -1 | awk '{print $2}')"
+        if [[ -n "$existing_provider" && "$existing_provider" != "$PROVIDER" ]]; then
+            echo "Provider mismatch: docker/compose.yaml is already trimmed to '$existing_provider' but you requested '$PROVIDER'." >&2
+            echo "The .NET code WAS switched, but compose.yaml would silently launch the wrong DB." >&2
+            echo "To recover: 'git restore docker/' to bring back the shards, then re-run." >&2
+            exit 1
+        fi
         tag SKIP "compose files already trimmed — skipping"
     else
         tag WARN "kept compose file '$KEEP_FILENAME' missing — leaving compose dir untouched"

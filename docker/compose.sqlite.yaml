@@ -8,7 +8,7 @@ services:
     environment:
       Database__Provider: Sqlite
       ConnectionStrings__Sqlite: "Data Source=/data/starter.db"
-      Jwt__SecretKey: ${JWT_SECRET_KEY}
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY required - copy .env.example to .env and set a 32+ byte base64 value}
       Cors__AllowedOrigins__0: ${CORS_ORIGIN:-http://localhost:8080}
     volumes:
       - starter-data:/data

@@ -505,6 +505,17 @@ try {
         # Check idempotency: if compose.yaml exists and no shards remain, already trimmed
         $shards = @(Get-ChildItem -Path $composeDir -Filter 'compose.*.yaml' -File -ErrorAction SilentlyContinue)
         if ((Test-Path $finalPath) -and $shards.Count -eq 0) {
+            # Verify the existing compose.yaml's Database__Provider matches the requested
+            # provider. Otherwise we'd silently leave compose pointing at the OLD provider
+            # while the .NET code is switched to the NEW one — broken stack with no error.
+            $composeContent = Get-Content -Path $finalPath -Raw -ErrorAction SilentlyContinue
+            $existingProvider = $null
+            if ($composeContent -match 'Database__Provider:\s*([A-Za-z]+)') {
+                $existingProvider = $Matches[1]
+            }
+            if ($existingProvider -and $existingProvider -ne $Provider) {
+                throw "Provider mismatch: docker/compose.yaml is already trimmed to '$existingProvider' but you requested '$Provider'. The .NET code WAS switched, but compose.yaml would silently launch the wrong DB. To recover: 'git restore docker/' to bring back the shards, then re-run."
+            }
             Write-Step 'SKIP' "compose files already trimmed — skipping" 'DarkGray'
         } else {
             Write-Step 'WARN' "kept compose file '$keepFilename' missing — leaving compose dir untouched" 'Yellow'

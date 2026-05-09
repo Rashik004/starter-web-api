@@ -225,18 +225,31 @@ if ! $NO_ENV_FILE; then
     if [[ -f "$ENV_PATH" ]]; then
         echo "WARNING: Skipping .env: file already exists at $ENV_PATH"
     else
+        # Restrictive umask so the secret file is never world/group-readable
+        # between create and chmod. set -C makes the redirect atomic-fail if
+        # another process raced us to create the file.
+        ( umask 077 && set -C && : > "$ENV_PATH" ) || {
+            echo "ERROR: Could not create $ENV_PATH (file already exists or permission denied)" >&2
+            exit 1
+        }
+
         # Generate a fresh JWT secret for .env; user-secrets (Phase 6) and Docker are
         # separate environments, so using independent keys is intentional.
         if command -v openssl >/dev/null 2>&1; then
             env_jwt="$(openssl rand -base64 48 | tr -d '\n')"
         else
+            if [[ ! -r /dev/urandom ]]; then
+                echo "ERROR: No entropy source available (openssl missing and /dev/urandom unreadable)" >&2
+                rm -f "$ENV_PATH"
+                exit 1
+            fi
             env_jwt="$(head -c 48 /dev/urandom | base64 | tr -d '\n')"
         fi
 
         {
             printf 'JWT_SECRET_KEY=%s\n' "$env_jwt"
             printf 'CORS_ORIGIN=http://localhost:8080\n'
-        } > "$ENV_PATH"
+        } >> "$ENV_PATH"
 
         case "$PROVIDER" in
             PostgreSql)
@@ -250,13 +263,27 @@ if ! $NO_ENV_FILE; then
                 printf 'POSTGRES_DB=starterdb\n'      >> "$ENV_PATH"
                 ;;
             SqlServer)
-                # Prepend "Aa1!" to guarantee SQL Server complexity rules (mixed case, digit, symbol).
+                # SQL Server requires 8+ chars with 3 of 4 categories (upper/lower/digit/symbol).
+                # Generate ~32 random base64 chars, then inject one of each required category
+                # at randomized positions so entropy is preserved without a predictable prefix.
                 if command -v openssl >/dev/null 2>&1; then
-                    raw_pwd="$(openssl rand -base64 24 | tr -d '\n')"
+                    base_pwd="$(openssl rand -base64 24 | tr -d '\n=')"
                 else
-                    raw_pwd="$(head -c 24 /dev/urandom | base64 | tr -d '\n')"
+                    base_pwd="$(head -c 24 /dev/urandom | base64 | tr -d '\n=')"
                 fi
-                sa_pwd="Aa1!${raw_pwd}"
+                # Pick one char from each required category (RANDOM is 0..32767 => mod is fine for small alphabets).
+                upper_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                lower_chars='abcdefghijklmnopqrstuvwxyz'
+                digit_chars='0123456789'
+                symbol_chars='!@#%^*-_+='
+                pick() { local s="$1"; printf '%s' "${s:$((RANDOM % ${#s})):1}"; }
+                extras="$(pick "$upper_chars")$(pick "$lower_chars")$(pick "$digit_chars")$(pick "$symbol_chars")"
+                # Insert each extra char at a random position in base_pwd (Fisher-Yates-ish).
+                sa_pwd="$base_pwd"
+                for i in 0 1 2 3; do
+                    pos=$((RANDOM % (${#sa_pwd} + 1)))
+                    sa_pwd="${sa_pwd:0:$pos}${extras:$i:1}${sa_pwd:$pos}"
+                done
                 printf 'MSSQL_SA_PASSWORD=%s\n' "$sa_pwd" >> "$ENV_PATH"
                 ;;
             # Sqlite: no extra keys needed.

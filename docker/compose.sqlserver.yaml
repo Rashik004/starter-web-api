@@ -3,12 +3,15 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD required - copy .env.example to .env and set a complex password (16+ chars, mixed case, digit, symbol)}
       MSSQL_PID: Developer
     volumes:
       - mssql-data:/var/opt/mssql
+    # TCP probe is tool-version-agnostic: the sqlcmd binary path under
+    # /opt/mssql-tools*/bin/ has changed twice in past Microsoft images.
+    # Port 1433 listening is sufficient signal that the engine is up.
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -No -Q 'SELECT 1' || exit 1"]
+      test: ["CMD-SHELL", "timeout 3 bash -c '</dev/tcp/127.0.0.1/1433' || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -24,7 +27,7 @@ services:
     environment:
       Database__Provider: SqlServer
       ConnectionStrings__SqlServer: "Server=mssql;Database=StarterDb;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
-      Jwt__SecretKey: ${JWT_SECRET_KEY}
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY required - copy .env.example to .env and set a 32+ byte base64 value}
       Cors__AllowedOrigins__0: ${CORS_ORIGIN:-http://localhost:8080}
     depends_on:
       mssql:

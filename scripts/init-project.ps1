@@ -233,15 +233,63 @@ if (-not $NoEnvFile) {
                 $lines += "POSTGRES_DB=starterdb"
             }
             'SqlServer' {
-                # Prepend "Aa1!" to guarantee SQL Server complexity rules (mixed case, digit, symbol).
-                $rawPwd = [Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(24))
-                $saPwd = "Aa1!$rawPwd"
+                # SQL Server requires 8+ chars with 3 of 4 categories (upper/lower/digit/symbol).
+                # Inject one char from each required category at random positions in a 24-byte
+                # base64 string. Avoids the predictable "Aa1!" prefix while preserving entropy.
+                $basePwd = [Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(24)).TrimEnd('=')
+                $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+                function Pick-Char([string]$set) {
+                    $idx = [System.Security.Cryptography.RandomNumberGenerator]::GetInt32($set.Length)
+                    return $set[$idx]
+                }
+                $extras = @(
+                    (Pick-Char 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+                    (Pick-Char 'abcdefghijklmnopqrstuvwxyz')
+                    (Pick-Char '0123456789')
+                    (Pick-Char '!@#%^*-_+=')
+                )
+                $saPwd = $basePwd
+                foreach ($c in $extras) {
+                    $pos = [System.Security.Cryptography.RandomNumberGenerator]::GetInt32($saPwd.Length + 1)
+                    $saPwd = $saPwd.Insert($pos, [string]$c)
+                }
+                $rng.Dispose()
                 $lines += "MSSQL_SA_PASSWORD=$saPwd"
             }
             # Sqlite: no extra keys needed.
         }
 
-        [System.IO.File]::WriteAllText($envPath, ($lines -join "`n") + "`n")
+        # Atomic create with FileShare.None so a racing writer fails loudly. Use
+        # FileMode.CreateNew so an existing .env is never silently overwritten
+        # (matches the bash `set -C` guard).
+        $stream = [System.IO.File]::Open($envPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+        try {
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes(($lines -join "`n") + "`n")
+            $stream.Write($bytes, 0, $bytes.Length)
+        } finally {
+            $stream.Dispose()
+        }
+
+        # Restrict ACL: current user gets full control, all inherited rules removed.
+        # Mirrors the bash `chmod 600` so secrets are not readable by other local accounts.
+        # On non-Windows PowerShell, Set-Acl on file ACLs is a no-op; print a warning.
+        if ($IsWindows -or $PSVersionTable.PSVersion.Major -le 5) {
+            try {
+                $acl = New-Object System.Security.AccessControl.FileSecurity
+                $acl.SetAccessRuleProtection($true, $false)  # disable inheritance, drop inherited rules
+                $userSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
+                $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+                    $userSid,
+                    [System.Security.AccessControl.FileSystemRights]::FullControl,
+                    [System.Security.AccessControl.AccessControlType]::Allow)
+                $acl.AddAccessRule($rule)
+                Set-Acl -Path $envPath -AclObject $acl
+            } catch {
+                Write-Host "WARNING: Could not harden .env ACL: $($_.Exception.Message). Restrict permissions manually." -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "WARNING: PowerShell on this OS cannot harden .env ACL. Run: chmod 600 .env" -ForegroundColor Yellow
+        }
 
         Write-Host "Wrote .env (gitignored). Run: docker compose up"
         $envWritten = $true

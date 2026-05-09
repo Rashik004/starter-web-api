@@ -65,6 +65,6 @@ nunit-*.xml
 
 # Docker / env
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 data/
