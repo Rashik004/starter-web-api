@@ -480,6 +480,64 @@ try {
     }
 
     # -----------------------------------------------------------------------
+    # 9b. Trim Docker compose files
+    # -----------------------------------------------------------------------
+
+    $composeDir = Join-Path $rootDir 'docker'
+    $providerToFile = @{
+        'Sqlite'     = 'compose.sqlite.yaml'
+        'PostgreSql' = 'compose.postgres.yaml'
+        'SqlServer'  = 'compose.sqlserver.yaml'
+    }
+    $keepFilename = $providerToFile[$Provider]
+    $keepPath     = Join-Path $composeDir $keepFilename
+    $finalPath    = Join-Path $composeDir 'compose.yaml'
+
+    function Test-GitTracked {
+        param([string]$Path)
+        git -C $rootDir ls-files --error-unmatch $Path 2>$null | Out-Null
+        return $LASTEXITCODE -eq 0
+    }
+
+    if (-not (Test-Path $composeDir)) {
+        Write-Step 'SKIP' "docker/ directory absent — skipping compose trim" 'DarkGray'
+    } elseif (-not (Test-Path $keepPath)) {
+        # Check idempotency: if compose.yaml exists and no shards remain, already trimmed
+        $shards = @(Get-ChildItem -Path $composeDir -Filter 'compose.*.yaml' -File -ErrorAction SilentlyContinue)
+        if ((Test-Path $finalPath) -and $shards.Count -eq 0) {
+            Write-Step 'SKIP' "compose files already trimmed — skipping" 'DarkGray'
+        } else {
+            Write-Step 'WARN' "kept compose file '$keepFilename' missing — leaving compose dir untouched" 'Yellow'
+        }
+    } else {
+        # Delete unused compose shards
+        $shards = @(Get-ChildItem -Path $composeDir -Filter 'compose.*.yaml' -File -ErrorAction SilentlyContinue)
+        foreach ($shard in $shards) {
+            if ($shard.FullName -ne $keepPath) {
+                Write-Step 'DELETE' $shard.FullName 'Red'
+                if (-not $DryRun) {
+                    if (Test-GitTracked -Path $shard.FullName) {
+                        git -C $rootDir rm $shard.FullName
+                    } else {
+                        Remove-Item -Force $shard.FullName
+                    }
+                }
+            }
+        }
+        # Rename kept shard → compose.yaml (skip if already at final path)
+        if ($keepPath -ne $finalPath) {
+            Write-Step 'EDIT' "$keepPath -> $finalPath"
+            if (-not $DryRun) {
+                if (Test-GitTracked -Path $keepPath) {
+                    git -C $rootDir mv $keepPath $finalPath
+                } else {
+                    Move-Item -Force $keepPath $finalPath
+                }
+            }
+        }
+    }
+
+    # -----------------------------------------------------------------------
     # 10. Warn about architecture tests
     # -----------------------------------------------------------------------
 

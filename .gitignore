@@ -62,3 +62,9 @@ nunit-*.xml
 
 # VS user-specific project settings
 *.csproj.user
+
+# Docker / env
+.env
+.env.local
+.env.*.local
+data/

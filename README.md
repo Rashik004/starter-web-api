@@ -49,6 +49,52 @@ curl -sk https://localhost:5101/api/v1/todos -H "Authorization: Bearer $TOKEN"
 
 Auth endpoints: `POST /api/auth/{register,login}`, `GET /api/auth/google`. Sample CRUD: `/api/v1/todos`, `/api/v2/todos`.
 
+## Docker
+
+Run the API in a container — no .NET SDK or local DB needed.
+
+### Pre-bootstrap (fresh template, three compose files)
+
+Pick a provider:
+
+```bash
+docker compose -f docker/compose.sqlite.yaml     up -d   # SQLite (default)
+docker compose -f docker/compose.postgres.yaml   up -d   # PostgreSQL
+docker compose -f docker/compose.sqlserver.yaml  up -d   # SQL Server
+```
+
+The compose files read `JWT_SECRET_KEY`, `CORS_ORIGIN`, and provider passwords from `.env`. Copy the template and fill in values:
+
+```bash
+cp .env.example .env
+# Edit .env: set JWT_SECRET_KEY (any 32+ byte base64) and any DB passwords for the provider you chose.
+```
+
+### Post-bootstrap (after `init-project`)
+
+`init-project.{ps1,sh}` runs `select-db-provider` (which trims to a single `docker/compose.yaml`) and writes a `.env` with a generated `JWT_SECRET_KEY` plus matching DB credentials. After bootstrap:
+
+```bash
+docker compose up -d
+```
+
+Pass `--no-env-file` (`-NoEnvFile` on PowerShell) to `init-project` if you want to manage `.env` yourself.
+
+### Endpoints
+
+- API: <http://localhost:8080>
+- Health: <http://localhost:8080/health>, `/health/ready`, `/health/live`
+- API docs: <http://localhost:8080/scalar/v1>
+
+The container runs HTTP-only on port 8080. TLS is the reverse-proxy's job in production.
+
+### Production notes
+
+- **TLS**: terminate at a reverse proxy (Caddy, Traefik, nginx). The container speaks HTTP only.
+- **Multi-replica**: set `Database__AutoMigrate=false` and run migrations as a one-shot job before scaling. The default `AutoMigrate=true` is convenient for single-replica deployments only.
+- **Image**: framework-dependent, runs as non-root UID 1000, healthcheck hits `/health/live`.
+- **Secrets**: `.env` is gitignored. Pass production secrets via your orchestrator's secret store, not committed `.env` files.
+
 ## Features
 
 | Area | Included |

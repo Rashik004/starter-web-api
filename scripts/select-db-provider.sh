@@ -445,6 +445,63 @@ if [[ "$PROVIDER" != "Sqlite" ]]; then
     fi
 fi
 
+# ── 9b. Trim Docker compose files ────────────────────────────────────────
+
+COMPOSE_DIR="$ROOT_DIR/docker"
+
+declare -A PROVIDER_TO_FILE=(
+    [Sqlite]="compose.sqlite.yaml"
+    [PostgreSql]="compose.postgres.yaml"
+    [SqlServer]="compose.sqlserver.yaml"
+)
+
+KEEP_FILENAME="${PROVIDER_TO_FILE[$PROVIDER]}"
+KEEP_PATH="$COMPOSE_DIR/$KEEP_FILENAME"
+FINAL_PATH="$COMPOSE_DIR/compose.yaml"
+
+git_tracked() { git -C "$ROOT_DIR" ls-files --error-unmatch "$1" >/dev/null 2>&1; }
+
+if [[ ! -d "$COMPOSE_DIR" ]]; then
+    tag SKIP "docker/ directory absent — skipping compose trim"
+elif [[ ! -f "$KEEP_PATH" ]]; then
+    # Idempotency: if compose.yaml exists and no shards remain, already trimmed
+    shopt -s nullglob
+    _shards=("$COMPOSE_DIR"/compose.*.yaml)
+    shopt -u nullglob
+    if [[ -f "$FINAL_PATH" && ${#_shards[@]} -eq 0 ]]; then
+        tag SKIP "compose files already trimmed — skipping"
+    else
+        tag WARN "kept compose file '$KEEP_FILENAME' missing — leaving compose dir untouched"
+    fi
+else
+    # Delete unused compose shards
+    shopt -s nullglob
+    for shard in "$COMPOSE_DIR"/compose.*.yaml; do
+        if [[ "$shard" != "$KEEP_PATH" ]]; then
+            tag DELETE "$shard"
+            if ! $DRY_RUN; then
+                if git_tracked "$shard"; then
+                    git -C "$ROOT_DIR" rm "$shard"
+                else
+                    rm -f "$shard"
+                fi
+            fi
+        fi
+    done
+    shopt -u nullglob
+    # Rename kept shard → compose.yaml (skip if already at final path)
+    if [[ "$KEEP_PATH" != "$FINAL_PATH" ]]; then
+        tag EDIT "$KEEP_PATH -> $FINAL_PATH"
+        if ! $DRY_RUN; then
+            if git_tracked "$KEEP_PATH"; then
+                git -C "$ROOT_DIR" mv "$KEEP_PATH" "$FINAL_PATH"
+            else
+                mv -f "$KEEP_PATH" "$FINAL_PATH"
+            fi
+        fi
+    fi
+fi
+
 # ── 10. Warn about architecture tests ─────────────────────────────────────
 
 ARCH_SCRIPTS=(

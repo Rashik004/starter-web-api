@@ -143,7 +143,7 @@ FILES_MODIFIED=0
 # Build find command with included extensions and excluded directories
 find_args=(
     "$ROOT_DIR" -type f
-    \( -name '*.cs' -o -name '*.csproj' -o -name '*.slnx' -o -name '*.json' -o -name '*.ps1' -o -name '*.sh' -o -name '*.md' \)
+    \( -name '*.cs' -o -name '*.csproj' -o -name '*.slnx' -o -name '*.json' -o -name '*.ps1' -o -name '*.sh' -o -name '*.md' -o -name '*.yaml' -o -name '*.yml' -o -name 'Dockerfile' \)
     -not -path "$ROOT_DIR/.git/*"
     -not -path "$ROOT_DIR/.vs/*"
     -not -path "$ROOT_DIR/.planning/*"
