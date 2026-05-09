@@ -499,7 +499,7 @@ try {
     Write-Host "Next:"
     Write-Host "  - Review staged diff: git diff --cached"
     Write-Host "  - Commit when ready:  git commit -m 'chore: trim DB providers to $Provider'"
-    Write-Host "  - Run app:            dotnet run --project src/$Prefix.WebApi"
+    Write-Host "  - Run app:            dotnet run --project src/Host/$Prefix.WebApi"
 }
 finally {
     Pop-Location

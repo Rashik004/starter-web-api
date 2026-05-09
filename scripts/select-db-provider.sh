@@ -67,15 +67,15 @@ resolve_prefix() {
             echo "Invalid prefix '$PREFIX'. Must be a C# identifier or dotted namespace (e.g., 'Acme' or 'Acme.Server')." >&2
             exit 1
         fi
-        if [[ ! -f "$ROOT_DIR/$PREFIX.WebApi.slnx" ]]; then
-            echo "No '$PREFIX.WebApi.slnx' in $ROOT_DIR. Check --prefix value." >&2
+        if [[ ! -f "$ROOT_DIR/src/$PREFIX.WebApi.slnx" ]]; then
+            echo "No 'src/$PREFIX.WebApi.slnx' in $ROOT_DIR. Check --prefix value." >&2
             exit 1
         fi
         return
     fi
 
     local matches=() f
-    for f in "$ROOT_DIR"/*.WebApi.slnx; do
+    for f in "$ROOT_DIR"/src/*.WebApi.slnx; do
         [[ -f "$f" ]] && matches+=("$f")
     done
 
@@ -83,16 +83,16 @@ resolve_prefix() {
         local base
         base="$(basename "${matches[0]}" .slnx)"
         PREFIX="${base%.WebApi}"
-        tag DETECT "Prefix '$PREFIX' (from $(basename "${matches[0]}"))"
+        tag DETECT "Prefix '$PREFIX' (from src/$(basename "${matches[0]}"))"
         return
     fi
 
     if [[ ${#matches[@]} -eq 0 ]]; then
-        echo "No *.WebApi.slnx found in repo root. Pass --prefix explicitly." >&2
+        echo "No *.WebApi.slnx found in $ROOT_DIR/src. Pass --prefix explicitly." >&2
         exit 1
     fi
 
-    echo "Multiple *.WebApi.slnx files found:" >&2
+    echo "Multiple *.WebApi.slnx files found in src/:" >&2
     for f in "${matches[@]}"; do echo "  $(basename "$f")" >&2; done
     echo "Pass --prefix explicitly." >&2
     exit 1
@@ -314,7 +314,7 @@ fi
 # ── 2. Delete migration projects ──────────────────────────────────────────
 
 for d in "${DROP[@]}"; do
-    path="$ROOT_DIR/src/$PREFIX.Data.Migrations.$d"
+    path="$ROOT_DIR/src/Migrations/$PREFIX.Data.Migrations.$d"
     if [[ -d "$path" ]]; then
         tag DELETE "$path"
         $DRY_RUN || rm -rf "$path"
@@ -325,29 +325,29 @@ done
 
 # ── 3. Edit .slnx ─────────────────────────────────────────────────────────
 
-SLNX_PATH="$ROOT_DIR/$PREFIX.WebApi.slnx"
+SLNX_PATH="$ROOT_DIR/src/$PREFIX.WebApi.slnx"
 tag EDIT "$SLNX_PATH"
 if ! $DRY_RUN; then
     for d in "${DROP[@]}"; do
-        needle="Path=\"src/$PREFIX.Data.Migrations.$d/$PREFIX.Data.Migrations.$d.csproj\""
+        needle="Path=\"Migrations/$PREFIX.Data.Migrations.$d/$PREFIX.Data.Migrations.$d.csproj\""
         remove_line_containing "$needle" "$SLNX_PATH"
     done
 fi
 
 # ── 4. Edit host .csproj ──────────────────────────────────────────────────
 
-HOST_CSPROJ="$ROOT_DIR/src/$PREFIX.WebApi/$PREFIX.WebApi.csproj"
+HOST_CSPROJ="$ROOT_DIR/src/Host/$PREFIX.WebApi/$PREFIX.WebApi.csproj"
 tag EDIT "$HOST_CSPROJ"
 if ! $DRY_RUN; then
     for d in "${DROP[@]}"; do
-        needle="Include=\"..\\$PREFIX.Data.Migrations.$d\\$PREFIX.Data.Migrations.$d.csproj\""
+        needle="Include=\"..\\..\\Migrations\\$PREFIX.Data.Migrations.$d\\$PREFIX.Data.Migrations.$d.csproj\""
         remove_line_containing "$needle" "$HOST_CSPROJ"
     done
 fi
 
 # ── 5. Edit data .csproj: drop InternalsVisibleTo + unused EF packages ─────
 
-DATA_CSPROJ="$ROOT_DIR/src/$PREFIX.Data/$PREFIX.Data.csproj"
+DATA_CSPROJ="$ROOT_DIR/src/Modules/$PREFIX.Data/$PREFIX.Data.csproj"
 tag EDIT "$DATA_CSPROJ"
 declare -A PROVIDER_PACKAGE=(
     [Sqlite]=Microsoft.EntityFrameworkCore.Sqlite
@@ -367,7 +367,7 @@ fi
 
 # ── 6. Rewrite DataExtensions.cs ──────────────────────────────────────────
 
-DATA_EXT_PATH="$ROOT_DIR/src/$PREFIX.Data/DataExtensions.cs"
+DATA_EXT_PATH="$ROOT_DIR/src/Modules/$PREFIX.Data/DataExtensions.cs"
 tag EDIT "$DATA_EXT_PATH"
 if ! $DRY_RUN; then
     emit_data_extensions "$PROVIDER" "$PREFIX" > "$DATA_EXT_PATH"
@@ -375,7 +375,7 @@ fi
 
 # ── 7. Rewrite DatabaseOptions.cs ─────────────────────────────────────────
 
-DB_OPTS_PATH="$ROOT_DIR/src/$PREFIX.Data/Options/DatabaseOptions.cs"
+DB_OPTS_PATH="$ROOT_DIR/src/Modules/$PREFIX.Data/Options/DatabaseOptions.cs"
 tag EDIT "$DB_OPTS_PATH"
 if ! $DRY_RUN; then
     emit_database_options "$PROVIDER" "$PREFIX" > "$DB_OPTS_PATH"
@@ -384,8 +384,8 @@ fi
 # ── 8. Edit appsettings files ─────────────────────────────────────────────
 
 APPSETTINGS_FILES=(
-    "src/$PREFIX.WebApi/appsettings.json"
-    "src/$PREFIX.WebApi/appsettings.Development.json"
+    "src/Host/$PREFIX.WebApi/appsettings.json"
+    "src/Host/$PREFIX.WebApi/appsettings.Development.json"
 )
 for rel in "${APPSETTINGS_FILES[@]}"; do
     path="$ROOT_DIR/$rel"
@@ -410,7 +410,7 @@ done
 # ── 9. Delete SQLite DB file if switching away from Sqlite ────────────────
 
 if [[ "$PROVIDER" != "Sqlite" ]]; then
-    host_dir="$ROOT_DIR/src/$PREFIX.WebApi"
+    host_dir="$ROOT_DIR/src/Host/$PREFIX.WebApi"
     if [[ -d "$host_dir" ]]; then
         shopt -s nullglob
         for f in "$host_dir/$PREFIX_LOWER".db*; do
@@ -424,8 +424,8 @@ fi
 # ── 10. Warn about architecture tests ─────────────────────────────────────
 
 ARCH_SCRIPTS=(
-    "tests/$PREFIX.WebApi.Tests.Architecture/Scripts/test-module-removal.ps1"
-    "tests/$PREFIX.WebApi.Tests.Architecture/Scripts/test-module-removal.sh"
+    "src/tests/$PREFIX.WebApi.Tests.Architecture/Scripts/test-module-removal.ps1"
+    "src/tests/$PREFIX.WebApi.Tests.Architecture/Scripts/test-module-removal.sh"
 )
 for rel in "${ARCH_SCRIPTS[@]}"; do
     if [[ -f "$ROOT_DIR/$rel" ]]; then
@@ -438,11 +438,11 @@ done
 if ! $DRY_RUN && ! $SKIP_BUILD; then
     echo ""
     tag BUILD "dotnet restore + build"
-    if ! dotnet restore >/dev/null; then
+    if ! dotnet restore "$SLNX_PATH" >/dev/null; then
         echo "dotnet restore failed." >&2
         exit 1
     fi
-    if ! dotnet build --nologo -v quiet; then
+    if ! dotnet build "$SLNX_PATH" --nologo -v quiet; then
         echo ""
         echo "Build failed. Rollback with:" >&2
         echo "  git reset --hard HEAD && git clean -fd" >&2
@@ -462,4 +462,4 @@ echo "Done. Prefix: $PREFIX. Kept: $PROVIDER. Dropped: ${DROP[*]}."
 echo "Next:"
 echo "  - Review staged diff: git diff --cached"
 echo "  - Commit when ready:  git commit -m 'chore: trim DB providers to $PROVIDER'"
-echo "  - Run app:            dotnet run --project src/$PREFIX.WebApi"
+echo "  - Run app:            dotnet run --project src/Host/$PREFIX.WebApi"

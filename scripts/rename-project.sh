@@ -12,7 +12,7 @@ set -euo pipefail
 # ── Parse arguments ─────────────────────────────────────────────────────────
 
 NEW_PREFIX="${1:?Usage: rename-project.sh <NewPrefix> [OldPrefix] [--skip-build] [--include-bootstrap-scripts|--no-include-bootstrap-scripts]}"
-OLD_PREFIX="${2:-Test.Api}"
+OLD_PREFIX="${2:-Starter}"
 SKIP_BUILD=false
 INCLUDE_BOOTSTRAP=false
 INCLUDE_BOOTSTRAP_SET=false
@@ -20,16 +20,16 @@ INCLUDE_BOOTSTRAP_SET=false
 # Check if second arg is a flag (no old prefix provided)
 case "$OLD_PREFIX" in
     --skip-build)
-        OLD_PREFIX="Test.Api"
+        OLD_PREFIX="Starter"
         SKIP_BUILD=true
         ;;
     --include-bootstrap-scripts)
-        OLD_PREFIX="Test.Api"
+        OLD_PREFIX="Starter"
         INCLUDE_BOOTSTRAP=true
         INCLUDE_BOOTSTRAP_SET=true
         ;;
     --no-include-bootstrap-scripts)
-        OLD_PREFIX="Test.Api"
+        OLD_PREFIX="Starter"
         INCLUDE_BOOTSTRAP=false
         INCLUDE_BOOTSTRAP_SET=true
         ;;
@@ -70,9 +70,10 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-SLNX_FILE="$ROOT_DIR/$OLD_PREFIX.WebApi.slnx"
+SLNX_FILE="$ROOT_DIR/src/$OLD_PREFIX.WebApi.slnx"
 if [[ ! -f "$SLNX_FILE" ]]; then
     echo "Error: Solution file not found: $SLNX_FILE" >&2
+    echo "  Are you running from the correct repo, or has the project already been renamed?" >&2
     exit 1
 fi
 
@@ -84,6 +85,8 @@ OLD_PREFIX_LOWER="$(echo "$OLD_PREFIX" | tr '[:upper:]' '[:lower:]')"
 collisions=()
 new_slnx="$ROOT_DIR/src/$NEW_PREFIX.WebApi.slnx"
 [[ -e "$new_slnx" ]] && collisions+=("$new_slnx")
+
+# Phase 0.5 was already searching src/ recursively below — keep as is.
 
 if [[ -d "$ROOT_DIR/src" ]]; then
     while IFS= read -r -d '' path; do
@@ -121,7 +124,7 @@ fi
 
 echo "[Phase 1] Cleaning build artifacts..."
 
-find "$ROOT_DIR/src" "$ROOT_DIR/tests" -type d \( -name bin -o -name obj \) -exec rm -rf {} + 2>/dev/null || true
+find "$ROOT_DIR/src" -type d \( -name bin -o -name obj \) -exec rm -rf {} + 2>/dev/null || true
 
 if [[ -d "$ROOT_DIR/.vs" ]]; then
     rm -rf "$ROOT_DIR/.vs"
@@ -198,7 +201,7 @@ while IFS= read -r -d '' csproj; do
         echo "  $old_name -> $new_name"
         CSPROJS_RENAMED=$((CSPROJS_RENAMED + 1))
     fi
-done < <(find "$ROOT_DIR/src" "$ROOT_DIR/tests" -name "*.csproj" -print0 2>/dev/null)
+done < <(find "$ROOT_DIR/src" -name "*.csproj" -print0 2>/dev/null)
 
 echo "  $CSPROJS_RENAMED .csproj file(s) renamed."
 echo ""
@@ -209,22 +212,24 @@ echo "[Phase 4] Renaming project directories..."
 
 DIRS_RENAMED=0
 
-for parent in src tests; do
-    parent_path="$ROOT_DIR/$parent"
-    [[ -d "$parent_path" ]] || continue
-
-    # Process directories (immediate children only)
-    for dir in "$parent_path"/${OLD_PREFIX}*/; do
+# Recurse all depths under src/; deepest-first to avoid invalidating parent paths.
+# Print depth-prefixed lines, sort numerically descending, strip prefix.
+src_path="$ROOT_DIR/src"
+if [[ -d "$src_path" ]]; then
+    while IFS= read -r dir; do
         [[ -d "$dir" ]] || continue
+        parent_dir="$(dirname "$dir")"
         old_name="$(basename "$dir")"
         new_name="${old_name//$OLD_PREFIX/$NEW_PREFIX}"
         if [[ "$old_name" != "$new_name" ]]; then
-            mv "$dir" "$parent_path/$new_name"
+            mv "$dir" "$parent_dir/$new_name"
             echo "  $old_name -> $new_name"
             DIRS_RENAMED=$((DIRS_RENAMED + 1))
         fi
-    done
-done
+    done < <(
+        find "$src_path" -depth -type d -name "${OLD_PREFIX}*" 2>/dev/null
+    )
+fi
 
 echo "  $DIRS_RENAMED director(ies) renamed."
 echo ""
@@ -235,13 +240,13 @@ echo "[Phase 5] Renaming solution file..."
 
 OLD_SLNX_NAME="$OLD_PREFIX.WebApi.slnx"
 NEW_SLNX_NAME="$NEW_PREFIX.WebApi.slnx"
-OLD_SLNX_PATH="$ROOT_DIR/$OLD_SLNX_NAME"
+OLD_SLNX_PATH="$ROOT_DIR/src/$OLD_SLNX_NAME"
 
 if [[ -f "$OLD_SLNX_PATH" ]]; then
-    mv "$OLD_SLNX_PATH" "$ROOT_DIR/$NEW_SLNX_NAME"
-    echo "  $OLD_SLNX_NAME -> $NEW_SLNX_NAME"
+    mv "$OLD_SLNX_PATH" "$ROOT_DIR/src/$NEW_SLNX_NAME"
+    echo "  src/$OLD_SLNX_NAME -> src/$NEW_SLNX_NAME"
 else
-    echo "  Solution file '$OLD_SLNX_NAME' not found (may have been renamed already)."
+    echo "  Solution file 'src/$OLD_SLNX_NAME' not found (may have been renamed already)."
 fi
 
 echo ""
@@ -257,7 +262,7 @@ echo ""
 
 if [[ "$SKIP_BUILD" == false ]]; then
     echo "[Phase 6] Running verification build..."
-    dotnet build "$ROOT_DIR/$NEW_SLNX_NAME"
+    dotnet build "$ROOT_DIR/src/$NEW_SLNX_NAME"
     echo ""
     echo "Build succeeded!"
 else
