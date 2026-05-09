@@ -63,7 +63,7 @@ docker compose --project-directory . -f docker/compose.postgres.yaml   up -d   #
 docker compose --project-directory . -f docker/compose.sqlserver.yaml  up -d   # SQL Server
 ```
 
-The `--project-directory .` flag tells compose to read `.env` from the repo root (where `.env.example` lives). Without it, compose looks for `docker/.env` and silently sets `JWT_SECRET_KEY` to blank, which fails IOptions validation at startup.
+The `--project-directory .` flag tells compose to read `.env` from the repo root (where `.env.example` lives). Without it, compose looks for `docker/.env`; because the compose files use required-variable syntax such as `${JWT_SECRET_KEY:?...}`, missing values cause `docker compose` to fail fast during interpolation with the configured error message instead of starting the container.
 
 The compose files read `JWT_SECRET_KEY`, `CORS_ORIGIN`, and provider passwords from `.env`. Copy the template and fill in values:
 
