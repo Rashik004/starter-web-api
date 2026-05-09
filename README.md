@@ -90,6 +90,8 @@ Pass `--no-env-file` (`-NoEnvFile` on PowerShell) to `init-project` if you want 
 
 The container runs HTTP-only on port 8080. TLS is the reverse-proxy's job in production.
 
+> Only the SQLite path is end-to-end verified. Postgres and SqlServer compose files build successfully but full container-startup verification (with migrations) is left for a follow-up smoke-test script.
+
 ### Production notes
 
 - **TLS**: terminate at a reverse proxy (Caddy, Traefik, nginx). The container speaks HTTP only.
