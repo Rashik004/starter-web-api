@@ -70,7 +70,7 @@ scripts/
 - `FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build` — copies `.slnx`, all `*.csproj`, restores, then copies the rest and publishes the host project to `/publish` with `-c Release --no-restore`.
 - Layer-cache the restore: copy csproj files first, run `dotnet restore`, then copy source.
 - `FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime` — `WORKDIR /app`, `COPY --from=build /publish .`.
-- Create non-root user (`appuser`, UID 1000), `chown` `/app` and `/data`, `USER appuser`.
+- Reuse the base image's pre-baked non-root `app` user (UID 1654 in current `mcr.microsoft.com/dotnet/aspnet:10.0`), `chown` `/app` and `/data` to `app:app`, `USER app`. (Manual `groupadd -g 1000` collides with the base image's `ubuntu` user at UID 1000.)
 - `ENV ASPNETCORE_URLS=http://+:8080 ASPNETCORE_ENVIRONMENT=Production DOTNET_RUNNING_IN_CONTAINER=true`.
 - `EXPOSE 8080`.
 - `HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD wget -qO- http://localhost:8080/health/live || exit 1`.
@@ -80,7 +80,7 @@ scripts/
 - `docker build -t starter-webapi:dev .` completes without error.
 - `docker images starter-webapi:dev` reports image size < 350 MB.
 - `docker run --rm -p 8080:8080 -e Jwt__SecretKey=$(openssl rand -base64 48) starter-webapi:dev` starts cleanly; `curl http://localhost:8080/health/live` returns 200.
-- Container process runs as UID 1000 (verify: `docker exec <id> id`).
+- Container process runs as the base image's pre-baked non-root `app` user (currently UID 1654; verify: `docker exec <id> id`).
 
 ---
 
